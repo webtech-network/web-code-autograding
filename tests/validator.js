@@ -10,7 +10,7 @@ function loadFile(filePath) {
 }
 
 function loadDescriptor() {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, '../descriptor.json'), 'utf-8'));
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '../test-config.json'), 'utf-8'));
 }
 
 function validateHTMLFile() {
@@ -21,13 +21,13 @@ function validateHTMLFile() {
 
 function validateCSSFile() {
     const descriptor = loadDescriptor();
-    const css = loadFile(path.join(__dirname, '../src/styles.css'));
+    const css = loadFile(path.join(__dirname, '../src/style.css'));
     return validateCSS(css, descriptor.css);
 }
 
 function validateJSFile() {
     const descriptor = loadDescriptor();
-    const js = loadFile(path.join(__dirname, '../src/script.js'));
+    const js = loadFile(path.join(__dirname, '../src/app.js'));
     return validateJS(js, descriptor.js);
 }
 
