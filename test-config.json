@@ -1,0 +1,14 @@
+{
+    "html": {
+      "requiredTags": ["header", "footer", "nav"],
+      "forbiddenTags": ["blink", "marquee"]
+    },
+    "css": {
+      "requiredSelectors": [".container", "#main"],
+      "forbiddenProperties": ["position: fixed", "z-index: 9999"]
+    },
+    "js": {
+      "requiredFunctions": ["fetch", "addEventListener"],
+      "forbiddenFunctions": ["eval", "document.write"]
+    }
+  }
