@@ -10,5 +10,11 @@
     "js": {
       "requiredFunctions": ["fetch", "addEventListener"],
       "forbiddenFunctions": ["eval", "document.write"]
+    },
+    "git": {
+      "requiredBranches": ["main", "develop"],
+      "minCommits": 5,
+      "forbidNoFFMerge": true,
+      "minLinesChanged": 50
     }
   }

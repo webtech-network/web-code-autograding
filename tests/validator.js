@@ -4,6 +4,7 @@ const path = require('path');
 const validateHTML = require('./validateHTML');
 const validateCSS = require('./validateCSS');
 const validateJS = require('./validateJS');
+const validateGit = require('./validateGIT');
 
 function loadFile(filePath) {
     return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '';
@@ -31,8 +32,14 @@ function validateJSFile() {
     return validateJS(js, descriptor.js);
 }
 
+function validateGitRepo() {
+    const descriptor = loadDescriptor();
+    return validateGit(descriptor.git);
+}
+
 module.exports = {
     validateHTMLFile,
     validateCSSFile,
-    validateJSFile
+    validateJSFile,
+    validateGitRepo
 };
