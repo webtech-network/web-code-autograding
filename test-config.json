@@ -14,7 +14,8 @@
     "git": {
       "requiredBranches": ["main", "develop"],
       "minCommits": 5,
-      "forbidNoFFMerge": true,
+      "forbidNoFFMerge": false,
+      "minMerges": 1,
       "minLinesChanged": 50
     }
   }

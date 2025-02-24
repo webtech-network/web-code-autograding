@@ -49,15 +49,22 @@ function validateGit(rules) {
         results.passed.push(`Quantidade de commits (${commitCount}) dentro do esperado.`);
     }
 
-    // Verifica merges sem fast-forward
+    // Verifica merges sem fast-forward e quantidade mínima de merges
+    const merges = getGitMerges();
     if (rules.forbidNoFFMerge) {
-        const merges = getGitMerges();
         if (merges.length > 0) {
             results.failed.push(`Foram encontrados ${merges.length} merges no histórico. Verifique se foram revisados corretamente.`);
         } else {
             results.passed.push(`Nenhum merge sem fast-forward detectado.`);
         }
     }
+    if (merges.length < rules.minMerges) {
+        results.failed.push(`Quantidade de merges (${merges.length}) abaixo do mínimo esperado (${rules.minMerges}).`);
+    }
+    else {
+        results.passed.push(`Quantidade de merges (${merges.length}) dentro do esperado.`);
+    }
+
 
     // Verifica quantidade mínima de linhas alteradas no histórico
     const linesChanged = getGitLinesChanged();
