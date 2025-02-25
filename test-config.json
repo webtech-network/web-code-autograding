@@ -5,7 +5,8 @@
     },
     "css": {
       "requiredSelectors": [".container", "#main"],
-      "forbiddenProperties": ["position: fixed", "z-index: 9999"]
+      "requiredProperties": ["display:flex", "justify-content:center"],
+      "forbiddenProperties": ["position:fixed", "z-index:9999"]
     },
     "js": {
       "requiredFunctions": ["fetch", "addEventListener"],
@@ -16,6 +17,8 @@
       "minCommits": 5,
       "forbidNoFFMerge": false,
       "minMerges": 1,
-      "minLinesChanged": 50
+      "minLinesChanged": 50,
+      "requiredGitIgnoreEntries": ["/tmp", "secrets.env"],
+      "requiredFiles": ["README.md", "package.json"]
     }
   }

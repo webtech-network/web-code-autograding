@@ -1,3 +1,13 @@
 body {
     background-color: aquamarine;
 }
+
+.container {
+    display: flex;
+    justify-content: center;
+    /* position:fixed; */
+}
+
+#main {
+    margin: 0;
+}

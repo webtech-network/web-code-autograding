@@ -28,6 +28,24 @@ function getGitLinesChanged() {
     );
 }
 
+// função para identificar itens no arquivo .gitingnore
+function getGitIgnore() {
+    return execSync('cat .gitignore')
+        .toString()
+        .trim()  
+        .split('\n')
+        .filter(item => item);
+}
+
+// função para obter a lista completa de arquivos na branch master
+function getGitFiles() {
+    return execSync('git ls-tree --name-only -r HEAD')
+        .toString()
+        .trim()
+        .split('\n')
+        .filter(file => file);
+}
+
 function validateGit(rules) {
     let results = { passed: [], failed: [] };
 
@@ -65,7 +83,6 @@ function validateGit(rules) {
         results.passed.push(`Quantidade de merges (${merges.length}) dentro do esperado.`);
     }
 
-
     // Verifica quantidade mínima de linhas alteradas no histórico
     const linesChanged = getGitLinesChanged();
     if (linesChanged < rules.minLinesChanged) {
@@ -74,6 +91,26 @@ function validateGit(rules) {
     else {
         results.passed.push(`Quantidade de linhas alteradas (${linesChanged}) dentro do esperado.`);
     }
+
+    // Verifica itens constantes do gitignore
+    const gitIgnore = getGitIgnore();
+    rules.requiredGitIgnoreEntries.forEach(item => {
+        if (gitIgnore.includes(item)) {
+            results.passed.push(`Item '${item}' encontrado no .gitignore.`);
+        } else {
+            results.failed.push(`Item '${item}' não encontrado no .gitignore.`);
+        }
+    });
+
+    // Verifica arquivos obrigatórios na branch master
+    const files = getGitFiles();
+    rules.requiredFiles.forEach(file => {
+        if (files.includes(file)) {
+            results.passed.push(`Arquivo '${file}' encontrado na branch master.`);
+        } else {
+            results.failed.push(`Arquivo '${file}' não encontrado na branch master.`);
+        }
+    });
 
     return results;
 }
