@@ -1,12 +1,12 @@
 {
     "html": {
-      "requiredTags": ["header", "footer", "nav"],
+      "requiredTags": ["header", "footer", "nav", "main", "section", "article"],
       "forbiddenTags": ["blink", "marquee"]
     },
     "css": {
       "requiredSelectors": [".container", "#main"],
-      "requiredProperties": ["display:flex", "justify-content:center"],
-      "forbiddenProperties": ["position:fixed", "z-index:9999"]
+      "requiredProperties": ["display", "justify-content"],
+      "forbiddenProperties": ["position", "z-index"]
     },
     "js": {
       "requiredFunctions": ["fetch", "addEventListener"],

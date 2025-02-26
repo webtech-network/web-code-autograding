@@ -1,12 +1,55 @@
+function extractSelectors(cssString) {
+    // Expressão regular para capturar os seletores CSS
+    const regex = /([^{\s][^{}]*?)\s*{[^}]*}/g;
+    let selectors = [];
+    let match;
+
+    // Enquanto encontrar correspondências no CSS
+    while ((match = regex.exec(cssString)) !== null) {
+        // match[1] contém o seletor
+        selectors.push(match[1].trim());
+    }
+
+    return selectors;
+}
+
+function extractPropertiesAndValues(cssString) {
+    // Expressão regular para capturar as propriedades e valores dentro das regras CSS
+    const regex = /([^{\s][^{}]*?)\s*{([^}]*)}/g;
+    let properties = [];
+    let match;
+
+    // Enquanto encontrar correspondências no CSS
+    while ((match = regex.exec(cssString)) !== null) {
+        const ruleContent = match[2].trim(); // O conteúdo das declarações de estilo
+        const declarations = ruleContent.split(';').filter(Boolean); // Separa as declarações
+
+        declarations.forEach(declaration => {
+            const [property, value] = declaration.split(':').map(part => part.trim());
+            if (property && value) {
+                properties.push({ property, value });
+            }
+        });
+    }
+
+    return properties;
+}
+
+
 function validateCSS(css, rules) {
     let results = { passed: [], failed: [] };
 
-    // remove todo o conteúdo de comentários do css
-    css = css.replace(/\/\*.*?\*\//g, '');
+    //console.log ("css: ", css);
 
-    // realiza uma busca no css, utilizando regex para extrair seletores em um array e propriedades em outro
-    const selectors = css.match(/[^{]+(?=\{)/g) || [];
-    const properties = css.match(/[^:]+(?=;)/g) || [];
+    // remove todo o conteúdo de comentários do css, quebras de linha e espaços em branco
+    css = css.replace(/\/\*.*?\*\//g, '');
+    css = css.replace(/\n/g, '');
+    css = css.replace(/\s/g, '');
+
+    // avalia o texto css e extrai os seletores e propriedades
+    const selectors = extractSelectors(css);
+    const properties = extractPropertiesAndValues(css);
+
     console.log ("seletores: ", selectors);
     console.log ("props: ", properties); 
 
@@ -17,12 +60,12 @@ function validateCSS(css, rules) {
     });
 
     rules.requiredProperties.forEach(property => {
-        if (css.includes(property)) results.passed.push(`Propriedade ${property} encontrada.`);
+        if (properties.some(prop => prop.property === property)) results.passed.push(`Propriedade ${property} encontrada.`);
         else results.failed.push(`Propriedade ${property} não encontrada.`);
     });
 
     rules.forbiddenProperties.forEach(property => {
-        if (css.includes(property)) results.failed.push(`Propriedade proibida ${property} encontrada.`);
+        if (properties.some(prop => prop.property === property)) results.failed.push(`Propriedade proibida ${property} encontrada.`);
         else results.passed.push(`Propriedade proibida ${property} não encontrada.`);
     });
 
