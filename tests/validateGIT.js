@@ -33,7 +33,6 @@ function getGitTagCount() {
     return parseInt(execSync('git tag | wc -l').toString().trim(), 10);
 }
 
-
 // função para identificar itens no arquivo .gitingnore
 function getGitIgnore() {
     return execSync('cat .gitignore')

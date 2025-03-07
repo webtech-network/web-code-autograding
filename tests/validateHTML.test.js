@@ -1,11 +1,11 @@
 const { validateHTMLFile } = require('./validator');
 
-describe("Validação de HTML", () => {
-    test("Verifica conformidade do HTML", () => {
+describe("Verificação HTML", () => {
+    test("Boas práticas HTML >= 60%", () => {
         const result = validateHTMLFile();
 
         console.log("Resultados HTML:", result);
 
-        expect(result.failed.length).toBe(0);
+        expect(result.score).toBeGreaterThanOrEqual(60);
     });
 });

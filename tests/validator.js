@@ -16,19 +16,19 @@ function loadDescriptor() {
 
 function validateHTMLFile() {
     const descriptor = loadDescriptor();
-    const html = loadFile(path.join(__dirname, '../src/index.html'));
+    const html = loadFile(path.join(__dirname, '../public/index.html'));
     return validateHTML(html, descriptor.html);
 }
 
 function validateCSSFile() {
     const descriptor = loadDescriptor();
-    const css = loadFile(path.join(__dirname, '../src/style.css'));
+    const css = loadFile(path.join(__dirname, '../public/style.css'));
     return validateCSS(css, descriptor.css);
 }
 
 function validateJSFile() {
     const descriptor = loadDescriptor();
-    const js = loadFile(path.join(__dirname, '../src/app.js'));
+    const js = loadFile(path.join(__dirname, '../public/app.js'));
     return validateJS(js, descriptor.js);
 }
 
