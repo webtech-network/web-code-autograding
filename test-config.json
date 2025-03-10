@@ -8,9 +8,28 @@
       "forbiddenAttributes": ["style", "align", "bgcolor", "border", "cellpadding", "cellspacing", "frame", "rules", "width", "height", "valign", "nowrap", "bgcolor", "border", "cellpadding", "cellspacing", "frame", "rules", "width", "height", "valign", "nowrap"] 
     },
     "css": {
-      "requiredSelectors": [".container", "#main"],
-      "requiredProperties": ["display", "justify-content"],
-      "forbiddenProperties": ["position", "z-index"]
+      "requiredChecks": {
+        "checkResetCSS": true,
+        "checkRelativeUnits": true,
+        "checkCodeComments": true,
+        "checkMinCSSRules": true,
+        "minCSSRules": 15,
+        "checkRequiredProperties": true,
+        "requiredProperties": ["color", "font-size", "background", "margin", "padding", "display"]
+      },
+      "bonusChecks": {
+        "variables": true,
+        "flexbox": true,
+        "grid": true,
+        "animations": true,
+        "mediaQueries": true
+      },
+      "penaltyChecks": {
+        "important": true,
+        "idSelectors": true,
+        "hexColors": true,
+        "deepNesting": true
+      }
     },
     "js": {
       "requiredFunctions": ["fetch", "addEventListener"],
