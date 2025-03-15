@@ -1,0 +1,31 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Validate HTML
+      id: validate-html
+      uses: webtech-network/web-code-autograding@v1
+      with:
+        test-name: Validate HTML
+        setup-command: npm install
+        command: npm test validateHTML.test.js
+        procedure: validateHTMLFile
+        timeout: 10
+        max-score: 100
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        VALIDATE-HTML_RESULTS: "${{steps.validate-html.outputs.result}}"
+      with:
+        runners: validate-html
