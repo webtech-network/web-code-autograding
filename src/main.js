@@ -68,7 +68,7 @@ function run() {
     // correspondente ao valor de procedure, obtendo do resultado a mensagem e a pontuação
     startTime = new Date()
     if (procedure) {
-      const validator = require('./tests/validator')
+      const validator = require('/tests/validator')
       const {report, score} = validator[procedure]()
       output = report.join('\n')
       result = generateResult('pass', testName, command, output, 0, score)
