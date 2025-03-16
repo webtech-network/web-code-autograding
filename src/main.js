@@ -14,7 +14,6 @@ function btoa(str) {
 }
 
 function generateResult(status, testName, command, message, duration, currentScore, maxScore) {
-console.log ("resultado final", status, testName, command, message, duration, currentScore, maxScore)
   return {
     version: 1,
     status,
@@ -23,8 +22,7 @@ console.log ("resultado final", status, testName, command, message, duration, cu
       {
         name: testName,
         status,
-       // score: status === 'pass' ? currentScore : 0,
-       score: 20,
+        score: status === 'pass' ? currentScore : 0,
         message,
         test_code: command,
         filename: '',
@@ -74,9 +72,7 @@ function run() {
       const validator = require(`${process.env.GITHUB_WORKSPACE}/tests/validator.js`);
       const {report, score} = validator[procedure]()
       output = report.join('\n')
-      // converte os pontos para number
       currentScore = score
-      console.log('score', currentScore, typeof currentScore)
     } 
     else {
       // se não tiver um valor em procedure, executa o comando e captura a saída    
