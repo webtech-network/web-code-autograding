@@ -14,6 +14,9 @@ inputs:
   procedure:
     description: "Alternative direct function to get partial score and message"
     required: false
+  weight:
+    description: "Peso da avaliação no cálculo geral"
+    required: false
   timeout:
     description: "Duration (in minutes) before the test is terminated. Defaults to 10 minutes with a maximum limit of 6 hours."
     default: "10"

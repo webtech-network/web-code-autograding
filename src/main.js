@@ -51,6 +51,7 @@ function run() {
   const setupCommand = core.getInput('setup-command')
   const command = core.getInput('command', {required: true})
   const procedure = core.getInput('procedure')
+  const weight = core.getInput('weight')
   const timeout = parseFloat(core.getInput('timeout') || 10) * 60000 // Convert to minutes
   const maxScore = parseInt(core.getInput('max-score') || 0)
 
