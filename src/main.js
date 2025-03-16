@@ -75,7 +75,7 @@ function run() {
       const {report, score} = validator[procedure]()
       output = report.join('\n')
       // converte os pontos para number
-      currentScore = points
+      currentScore = score
       console.log('score', currentScore, typeof currentScore)
     } 
     else {
