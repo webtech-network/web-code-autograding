@@ -66,11 +66,18 @@ function run() {
 
     console.log (process.env)
 
+    // imprime no console o local de execução desse arquivo
+    console.log ("Diretório base: ", __dirname);
+
+    // imprime no console o conteúdo do diretório atual
+    console.log ("Conteúdo do diretório atual: ", execSync('ls -la', {timeout, env, stdio: 'inherit'})?.toString());
+
+
     // se tiver um valor em procedure, carrega o arquivo de validação (tests/validator.js) e dispara a função
     // correspondente ao valor de procedure, obtendo do resultado a mensagem e a pontuação
     startTime = new Date()
     if (procedure) {
-      const validator = require('/tests/validator')
+      const validator = require('./tests/validator')
       const {report, score} = validator[procedure]()
       output = report.join('\n')
       result = generateResult('pass', testName, command, output, 0, score)
