@@ -13,7 +13,7 @@ function btoa(str) {
   return Buffer.from(str).toString('base64')
 }
 
-function generateResult(status, testName, command, message, duration, maxScore) {
+function generateResult(status, testName, command, message, duration, score, maxScore) {
   return {
     version: 1,
     status,
@@ -22,7 +22,7 @@ function generateResult(status, testName, command, message, duration, maxScore) 
       {
         name: testName,
         status,
-        score: status === 'pass' ? maxScore : 0,
+        score: status === 'pass' ? score : 0,
         message,
         test_code: command,
         filename: '',
@@ -58,6 +58,7 @@ function run() {
   let startTime
   let endTime
   let result
+  let score = maxScore
 
   try {
     if (setupCommand) {
@@ -69,10 +70,9 @@ function run() {
     startTime = new Date()
     if (procedure) {
       const validator = require(`${process.env.GITHUB_WORKSPACE}/tests/validator.js`);
-      const {report, score} = validator[procedure]()
+      const {report, points} = validator[procedure]()
       output = report.join('\n')
-      result = generateResult('pass', testName, command, output, 0, score)
-      return core.setOutput('result', btoa(JSON.stringify(result)))
+      score = points
     } else 
     {
       // se não tiver um valor em procedure, executa o comando e captura a saída    
@@ -81,11 +81,11 @@ function run() {
     endTime = new Date()
 
     finalCommand = procedure ? procedure : command
-    result = generateResult('pass', testName, finalCommand, output, endTime - startTime, maxScore)
+    result = generateResult('pass', testName, finalCommand, output, endTime - startTime, score, maxScore)
   } catch (error) {
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
-    result = generateResult(status, testName, command, errorMessage, endTime - startTime, maxScore)
+    result = generateResult(status, testName, command, errorMessage, endTime - startTime, score, maxScore)
   }
 
   core.setOutput('result', btoa(JSON.stringify(result)))
