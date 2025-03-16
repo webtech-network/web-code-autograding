@@ -13,7 +13,7 @@ function btoa(str) {
   return Buffer.from(str).toString('base64')
 }
 
-function generateResult(status, testName, command, message, duration, score, maxScore) {
+function generateResult(status, testName, command, message, duration, currentScore, maxScore) {
   return {
     version: 1,
     status,
@@ -22,7 +22,7 @@ function generateResult(status, testName, command, message, duration, score, max
       {
         name: testName,
         status,
-        score: status === 'pass' ? score : 0,
+        score: status === 'pass' ? currentScore : 0,
         message,
         test_code: command,
         filename: '',
@@ -73,8 +73,8 @@ function run() {
       const {report, points} = validator[procedure]()
       output = report.join('\n')
       score = points
-    } else 
-    {
+    } 
+    else {
       // se não tiver um valor em procedure, executa o comando e captura a saída    
       output = execSync(command, {timeout, env, stdio: 'inherit'})?.toString()
     }
@@ -86,7 +86,7 @@ function run() {
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
     result = generateResult(status, testName, command, errorMessage, endTime - startTime, score, maxScore)
-  }
+  } 
 
   core.setOutput('result', btoa(JSON.stringify(result)))
 }
