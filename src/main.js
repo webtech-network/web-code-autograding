@@ -60,7 +60,7 @@ function run() {
   let startTime
   let endTime
   let result
-  let score = maxScore
+  let currentScore = maxScore
 
   try {
     if (setupCommand) {
@@ -72,11 +72,11 @@ function run() {
     startTime = new Date()
     if (procedure) {
       const validator = require(`${process.env.GITHUB_WORKSPACE}/tests/validator.js`);
-      const {report, points} = validator[procedure]()
+      const {report, score} = validator[procedure]()
       output = report.join('\n')
       // converte os pontos para number
-      score = points
-      console.log('score', score, typeof score)
+      currentScore = points
+      console.log('score', currentScore, typeof currentScore)
     } 
     else {
       // se não tiver um valor em procedure, executa o comando e captura a saída    
@@ -85,11 +85,11 @@ function run() {
     endTime = new Date()
 
     finalCommand = procedure ? procedure : command
-    result = generateResult('pass', testName, finalCommand, output, endTime - startTime, score, maxScore)
+    result = generateResult('pass', testName, finalCommand, output, endTime - startTime, currentScore, maxScore)
   } catch (error) {
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
-    result = generateResult(status, testName, command, errorMessage, endTime - startTime, score, maxScore)
+    result = generateResult(status, testName, command, errorMessage, endTime - startTime, currentScore, maxScore)
   } 
 
   core.setOutput('result', btoa(JSON.stringify(result)))
