@@ -17,12 +17,14 @@
   },
   "scripts": {
     "test": "jest --verbose",
-    "build": "esbuild src/main.js --bundle --minify --platform=node --outfile=dist/main.js"
+    "build": "esbuild src/command-grader/main.js --bundle --minify --platform=node --outfile=dist/command-grader/main.js && esbuild src/reporter-grader/main.js --bundle --minify --platform=node --outfile=dist/reporter-grader/main.js"
   },
   "dependencies": {
-    "cheerio": "^1.0.0",
-    "html-validator": "^6.0.1",
     "@actions/core": "^1.10.1",
-    "@actions/exec": "^1.1.1"
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^6.0.0",
+    "cheerio": "^1.0.0",
+    "cli-table3": "^0.6.5",
+    "html-validator": "^6.0.1"
   }
 }
