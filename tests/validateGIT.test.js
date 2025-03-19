@@ -1,7 +1,7 @@
-const { validateGitRepo } = require('.');
+const { validateGITRepo } = require('.');
 
 describe("Validação de Histórico Git", () => {
-    const result = validateGitRepo();
+    const result = validateGITRepo();
     test("Verifica conformidade do repositório Git", () => {
 
         console.log("Resultados Git:", result);
