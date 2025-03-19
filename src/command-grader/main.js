@@ -70,7 +70,7 @@ function run() {
     // correspondente ao valor de procedure, obtendo do resultado a mensagem e a pontuação
     startTime = new Date()
     if (commandType === 'function') {
-      const validator = require(`${process.env.GITHUB_WORKSPACE}/tests`);
+      const validator = require(`../tests`);
       const {report, score} = validator[command]()
       output = report.join('\n')
       currentScore = score
