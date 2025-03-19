@@ -31,13 +31,12 @@ function AggregateResults(runnerResults) {
     });
 
     const totals = getTableTotals(runnerResults, (row) => table.push(row));
-console.log ('dados', totals)
 
     // const totalPercent = totals.reduce(totalPercentageReducer, 0).toFixed(2) + "%";
-    const totalTestScores = totals.reduce((acc, curr) => acc + curr.score * (curr.weight/100), 0)
-    const totalMaxScores = totals.reduce((acc, curr) => acc + curr.maxScore * (curr.weight/100), 0)
+    const totalTestScores = totals.reduce((acc, curr) => acc + curr.score * curr.weight / 100, 0)
+    const totalMaxScores = totals.reduce((acc, curr) => acc + curr.maxScore * curr.weight / 100, 0)
 
-    table.push(['Total: ', '--', `${totalTestScores}`, `${totalMaxScores}`]);
+    table.push(['Total: ', '--', `${totalTestScores.toFixed(2)}`, `${totalMaxScores.toFixed(2)}`]);
     
     console.log(table.toString());
   } catch (error) {
