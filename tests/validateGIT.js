@@ -9,6 +9,17 @@ function validateGit(rules) {
     let report = [];
     let score = baseScore;
 
+    // 📌 2. Verificação do Número de Commits
+    if (rules.minCommits) {
+        const commitCount = parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
+        if (commitCount < rules.minCommits) {
+            report.push(`⚠️ Poucos commits no repositório (${commitCount}/${rules.minCommits}) (-5 pontos)`);
+            score -= 5;
+        } else {
+            report.push(`✅ Commits suficientes (${commitCount})`);
+        }
+    }
+
     // 📌 1. Verificação das Branches Obrigatórias
     if (rules.requiredBranches) {
         const branches = execSync('git branch -r')
@@ -24,17 +35,6 @@ function validateGit(rules) {
                 report.push(`✅ Branch encontrada: ${branch}`);
             }
         });
-    }
-
-    // 📌 2. Verificação do Número de Commits
-    if (rules.minCommits) {
-        const commitCount = parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
-        if (commitCount < rules.minCommits) {
-            report.push(`⚠️ Poucos commits no repositório (${commitCount}/${rules.minCommits}) (-5 pontos)`);
-            score -= 5;
-        } else {
-            report.push(`✅ Commits suficientes (${commitCount})`);
-        }
     }
 
     // 📌 3. Verificação do Número de Tags
