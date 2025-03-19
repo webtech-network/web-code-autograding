@@ -66,7 +66,7 @@ function run() {
       execSync(setupCommand, {timeout, env, stdio: 'inherit'})
     }
 
-console.log ('Ambiente de Execução ----------- \n', testName, process.env);
+// console.log ('Ambiente de Execução ----------- \n', testName, process.env);
 
     startTime = new Date()
     // se for um comando do tipo função, carrega do conjunto de testes (tests/index.js) e 
@@ -81,7 +81,7 @@ console.log ('REPORT DE Execução ----------- \n', testName, report, score);
     } 
     else {
       // se não tiver um valor em procedure, executa o comando e captura a saída    
-      output = execSync(command, {timeout, env: process.env, stdio: 'inherit'})?.toString()
+      output = execSync(command, {timeout, env, stdio: 'inherit'})?.toString()
     }
     endTime = new Date()
 

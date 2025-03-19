@@ -14,6 +14,7 @@ const getTestScore = (runnerResult) => {
     return status === "pass" ? acc + score : acc;
   }, 0);
 
+  return score
   return (score / tests.length) * (getMaxScoreForTest(runnerResult) || 0);
 };
 

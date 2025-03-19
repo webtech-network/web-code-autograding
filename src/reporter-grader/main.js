@@ -12,11 +12,11 @@ try {
       return { runner, results: JSON.parse(json) };
     });
 
-runnerResults.forEach(({ runner, results }) => {
-  console.log(`Runner-----------: ${runner}`);
-  console.log(`Results: ${JSON.stringify(results.tests)}`);
-  console.log('\n\n');
-});
+// runnerResults.forEach(({ runner, results }) => {
+//   console.log(`Runner-----------: ${runner}`);
+//   console.log(`Results: ${JSON.stringify(results.tests)}`);
+//   console.log('\n\n');
+// });
 
   ConsoleResults(runnerResults);
   NotifyClassroom(runnerResults);
