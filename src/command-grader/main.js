@@ -87,6 +87,7 @@ console.log ('REPORT DE Execução ----------- \n', testName, report, score);
 
     result = generateResult('pass', testName, command, output, endTime - startTime, currentScore, maxScore)
   } catch (error) {
+console.log(error);     
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
     result = generateResult(status, testName, command, errorMessage, endTime - startTime, currentScore, maxScore)
