@@ -66,6 +66,8 @@ function run() {
       execSync(setupCommand, {timeout, env, stdio: 'inherit'})
     }
 
+    console.log ('Ambiente de Execução', testName, process.env);
+
     // se tiver um valor em procedure, carrega o arquivo de validação (tests/index.js) e dispara a função
     // correspondente ao valor de procedure, obtendo do resultado a mensagem e a pontuação
     startTime = new Date()
