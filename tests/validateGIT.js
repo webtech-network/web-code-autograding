@@ -10,13 +10,13 @@ function validateGit(rules) {
     let score = baseScore;
 
     // 📌 1. Verificação das Branches Obrigatórias
-    if (rules.git.requiredBranches) {
+    if (rules.requiredBranches) {
         const branches = execSync('git branch -r')
             .toString()
             .split("\n")
             .map(b => b.trim().replace("origin/", ""));
 
-        rules.git.requiredBranches.forEach(branch => {
+        rules.requiredBranches.forEach(branch => {
             if (!branches.includes(branch)) {
                 report.push(`⚠️ Branch obrigatória ausente: ${branch} (-5 pontos)`);
                 score -= 5;
@@ -27,10 +27,10 @@ function validateGit(rules) {
     }
 
     // 📌 2. Verificação do Número de Commits
-    if (rules.git.minCommits) {
+    if (rules.minCommits) {
         const commitCount = parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
-        if (commitCount < rules.git.minCommits) {
-            report.push(`⚠️ Poucos commits no repositório (${commitCount}/${rules.git.minCommits}) (-5 pontos)`);
+        if (commitCount < rules.minCommits) {
+            report.push(`⚠️ Poucos commits no repositório (${commitCount}/${rules.minCommits}) (-5 pontos)`);
             score -= 5;
         } else {
             report.push(`✅ Commits suficientes (${commitCount})`);
@@ -38,10 +38,10 @@ function validateGit(rules) {
     }
 
     // 📌 3. Verificação do Número de Tags
-    if (rules.git.minTags) {
+    if (rules.minTags) {
         const tagCount = parseInt(execSync('git tag | wc -l').toString().trim(), 10);
-        if (tagCount < rules.git.minTags) {
-            report.push(`⚠️ Poucas tags encontradas (${tagCount}/${rules.git.minTags}) (-3 pontos)`);
+        if (tagCount < rules.minTags) {
+            report.push(`⚠️ Poucas tags encontradas (${tagCount}/${rules.minTags}) (-3 pontos)`);
             score -= 3;
         } else {
             report.push(`✅ Tags suficientes (${tagCount})`);
@@ -49,7 +49,7 @@ function validateGit(rules) {
     }
 
     // 📌 4. Proibição de Merges sem Fast-Forward
-    if (rules.git.forbidNoFFMerge) {
+    if (rules.forbidNoFFMerge) {
         const noFFMerges = execSync('git log --merges --pretty=%h').toString().trim().split("\n");
         if (noFFMerges.length > 0) {
             report.push(`⚠️ Merges sem fast-forward detectados (-4 pontos)`);
@@ -60,10 +60,10 @@ function validateGit(rules) {
     }
 
     // 📌 5. Verificação do Número de Merges
-    if (rules.git.minMerges) {
+    if (rules.minMerges) {
         const mergeCount = parseInt(execSync('git log --merges --oneline | wc -l').toString().trim(), 10);
-        if (mergeCount < rules.git.minMerges) {
-            report.push(`⚠️ Poucos merges realizados (${mergeCount}/${rules.git.minMerges}) (-3 pontos)`);
+        if (mergeCount < rules.minMerges) {
+            report.push(`⚠️ Poucos merges realizados (${mergeCount}/${rules.minMerges}) (-3 pontos)`);
             score -= 3;
         } else {
             report.push(`✅ Merges suficientes (${mergeCount})`);
@@ -71,10 +71,10 @@ function validateGit(rules) {
     }
 
     // 📌 6. Verificação do Número de Linhas Modificadas
-    if (rules.git.minLinesChanged) {
+    if (rules.minLinesChanged) {
         const linesChanged = parseInt(execSync("git log --stat --pretty=tformat: | awk '{ sum += $1 } END { print sum }'").toString().trim(), 10);
-        if (linesChanged < rules.git.minLinesChanged) {
-            report.push(`⚠️ Poucas linhas modificadas (${linesChanged}/${rules.git.minLinesChanged}) (-3 pontos)`);
+        if (linesChanged < rules.minLinesChanged) {
+            report.push(`⚠️ Poucas linhas modificadas (${linesChanged}/${rules.minLinesChanged}) (-3 pontos)`);
             score -= 3;
         } else {
             report.push(`✅ Linhas modificadas suficientes (${linesChanged})`);
@@ -82,10 +82,10 @@ function validateGit(rules) {
     }
 
     // 📌 7. Verificação de Entradas no `.gitignore`
-    if (rules.git.requiredGitIgnoreEntries) {
+    if (rules.requiredGitIgnoreEntries) {
         if (fs.existsSync('.gitignore')) {
             const gitignoreContent = fs.readFileSync('.gitignore', 'utf-8');
-            rules.git.requiredGitIgnoreEntries.forEach(entry => {
+            rules.requiredGitIgnoreEntries.forEach(entry => {
                 if (!gitignoreContent.includes(entry)) {
                     report.push(`⚠️ Entrada ausente no .gitignore: ${entry} (-2 pontos)`);
                     score -= 2;
@@ -100,8 +100,8 @@ function validateGit(rules) {
     }
 
     // 📌 8. Verificação de Arquivos Obrigatórios
-    if (rules.git.requiredFiles) {
-        rules.git.requiredFiles.forEach(file => {
+    if (rules.requiredFiles) {
+        rules.requiredFiles.forEach(file => {
             if (!fs.existsSync(file)) {
                 report.push(`⚠️ Arquivo obrigatório ausente: ${file} (-4 pontos)`);
                 score -= 4;
