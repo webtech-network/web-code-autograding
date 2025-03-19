@@ -81,7 +81,7 @@ console.log ('REPORT DE Execução ----------- \n', testName, report, score);
     } 
     else {
       // se não tiver um valor em procedure, executa o comando e captura a saída    
-      output = execSync(command, {timeout, env, stdio: 'inherit'})?.toString()
+      output = execSync(command, {timeout, env: process.env, stdio: 'inherit'})?.toString()
     }
     endTime = new Date()
 
