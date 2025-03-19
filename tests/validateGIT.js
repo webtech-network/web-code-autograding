@@ -1,6 +1,7 @@
 const { execSync } = require('child_process');
 
 function getGitBranches() {
+console.log (`-------Executando getGitBranches`)    
     return execSync('git branch --format="%(refname:short)"')
         .toString()
         .trim()
@@ -8,10 +9,12 @@ function getGitBranches() {
 }
 
 function getGitCommitCount() {
+console.log (`-------Executando getGitCommitCount`)    
     return parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
 }
 
 function getGitMerges() {
+console.log (`-------Executando getGitMerges`)    
     return execSync('git log --merges --pretty=format:"%H"')
         .toString()
         .trim()
@@ -20,6 +23,7 @@ function getGitMerges() {
 }
 
 function getGitLinesChanged() {
+console.log (`-------Executando getGitLinesChanged`)    
     return parseInt(
         execSync('git log --pretty=tformat: --numstat | awk \'{sum+=$1+$2} END {print sum}\'')
             .toString()
@@ -30,11 +34,13 @@ function getGitLinesChanged() {
 
 // função para obter a quantidade de tags no repositório
 function getGitTagCount() {
+console.log (`-------Executando getGitTagCount`)    
     return parseInt(execSync('git tag | wc -l').toString().trim(), 10);
 }
 
 // função para identificar itens no arquivo .gitingnore
 function getGitIgnore() {
+console.log (`-------Executando getGitIgnore`)    
     return execSync('cat .gitignore')
         .toString()
         .trim()  
@@ -44,6 +50,7 @@ function getGitIgnore() {
 
 // função para obter a lista completa de arquivos na branch master
 function getGitFiles() {
+console.log (`-------Executando getGitFiles`)    
     return execSync('git ls-tree --name-only -r HEAD')
         .toString()
         .trim()
@@ -52,6 +59,7 @@ function getGitFiles() {
 }
 
 function validateGit(rules) {
+console.log (`-------Executando validateGit`)    
     let results = { passed: [], failed: [] };
 
     // Verifica branches obrigatórias
@@ -64,6 +72,7 @@ function validateGit(rules) {
         }
     });
 
+    
     // Verifica quantidade minima de commits
     const commitCount = getGitCommitCount();
     if (commitCount < rules.minCommits) {
