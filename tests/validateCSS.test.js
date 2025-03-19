@@ -1,4 +1,4 @@
-const { validateCSSFile } = require('./validator');
+const { validateCSSFile } = require('.');
 
 describe("Validação de CSS", () => {
     test("Verifica conformidade do CSS", () => {

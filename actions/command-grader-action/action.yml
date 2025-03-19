@@ -11,9 +11,9 @@ inputs:
   command:
     description: "Primary command to run for the test. A zero exit code signifies a successful test."
     required: true
-  procedure:
-    description: "Alternative direct function to get partial score and message"
-    required: false
+  command-type:
+    description: "Describe whether command parameter is a command-line (cmd) or a funcion (function)"
+    required: true
   weight:
     description: "Peso da avaliação no cálculo geral"
     required: false

@@ -1,4 +1,4 @@
-const { validateHTMLFile } = require('./validator');
+const { validateHTMLFile } = require('.');
 
 describe("Verificação HTML", () => {
     test("Boas práticas HTML >= 60%", () => {

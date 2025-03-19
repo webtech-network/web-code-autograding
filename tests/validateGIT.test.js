@@ -1,4 +1,4 @@
-const { validateGitRepo } = require('./validator');
+const { validateGitRepo } = require('.');
 
 describe("Validação de Histórico Git", () => {
     const result = validateGitRepo();

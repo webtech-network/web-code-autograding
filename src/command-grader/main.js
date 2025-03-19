@@ -50,7 +50,7 @@ function run() {
   const testName = core.getInput('test-name', {required: true})
   const setupCommand = core.getInput('setup-command')
   const command = core.getInput('command', {required: true})
-  const procedure = core.getInput('procedure')
+  const commandType = core.getInput('command-type', {required: true})
   const weight = core.getInput('weight')
   const timeout = parseFloat(core.getInput('timeout') || 10) * 60000 // Convert to minutes
   const maxScore = parseInt(core.getInput('max-score') || 0)
@@ -66,12 +66,12 @@ function run() {
       execSync(setupCommand, {timeout, env, stdio: 'inherit'})
     }
 
-    // se tiver um valor em procedure, carrega o arquivo de validação (tests/validator.js) e dispara a função
+    // se tiver um valor em procedure, carrega o arquivo de validação (tests/index.js) e dispara a função
     // correspondente ao valor de procedure, obtendo do resultado a mensagem e a pontuação
     startTime = new Date()
-    if (procedure) {
-      const validator = require(`${process.env.GITHUB_WORKSPACE}/tests/validator.js`);
-      const {report, score} = validator[procedure]()
+    if (commandType === 'function') {
+      const validator = require(`${process.env.GITHUB_WORKSPACE}/tests`);
+      const {report, score} = validator[command]()
       output = report.join('\n')
       currentScore = score
     } 
@@ -81,8 +81,7 @@ function run() {
     }
     endTime = new Date()
 
-    finalCommand = procedure ? procedure : command
-    result = generateResult('pass', testName, finalCommand, output, endTime - startTime, currentScore, maxScore)
+    result = generateResult('pass', testName, command, output, endTime - startTime, currentScore, maxScore)
   } catch (error) {
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
