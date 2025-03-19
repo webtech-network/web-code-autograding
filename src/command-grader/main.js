@@ -68,14 +68,15 @@ function run() {
 
 console.log ('Ambiente de Execução ----------- \n', testName, process.env);
 
-    // se tiver um valor em procedure, carrega o arquivo de validação (tests/index.js) e dispara a função
-    // correspondente ao valor de procedure, obtendo do resultado a mensagem e a pontuação
     startTime = new Date()
+    // se for um comando do tipo função, carrega do conjunto de testes (tests/index.js) e 
+    // dispara a função obtendo do resultado a mensagem e a pontuação
     if (commandType === 'function') {
       const validator = require(`../../tests`);
       const {report, score} = validator[command]()
       output = report.join('\n')
-console.log ('REPORT DE Execução ----------- \n', testName, report, score);      
+console.log ('REPORT DE Execução ----------- \n', testName, report, score);  
+
       currentScore = score
     } 
     else {
