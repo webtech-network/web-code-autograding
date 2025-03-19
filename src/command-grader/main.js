@@ -13,10 +13,11 @@ function btoa(str) {
   return Buffer.from(str).toString('base64')
 }
 
-function generateResult(status, testName, command, message, duration, currentScore, maxScore) {
+function generateResult(status, testName, command, message, duration, weight, currentScore, maxScore) {
   return {
     version: 1,
     status,
+    weight,
     max_score: maxScore,
     tests: [
       {
@@ -51,7 +52,7 @@ function run() {
   const setupCommand = core.getInput('setup-command')
   const command = core.getInput('command', {required: true})
   const commandType = core.getInput('command-type', {required: true})
-  const weight = core.getInput('weight')
+  const weight = parseFloat (core.getInput('weight')) || 100
   const timeout = parseFloat(core.getInput('timeout') || 10) * 60000 // Convert to minutes
   const maxScore = parseInt(core.getInput('max-score') || 0)
 
@@ -75,7 +76,8 @@ function run() {
       const validator = require(`../../tests`);
       const {report, score} = validator[command]()
       output = report.join('\n')
-console.log ('REPORT DE EXECUÇÃO COMMANDO ----------- \n', testName, report, score);  
+      console.log (`------ Relatório de Verficação [${testName}] ------\n`, 
+        'Pontos observados', report, `Nota final: ${score} em ${maxScore}`);  
 
       currentScore = score
     } 
@@ -85,11 +87,11 @@ console.log ('REPORT DE EXECUÇÃO COMMANDO ----------- \n', testName, report, s
     }
     endTime = new Date()
 
-    result = generateResult('pass', testName, command, output, endTime - startTime, currentScore, maxScore)
+    result = generateResult('pass', testName, command, output, endTime - startTime, weight, currentScore, maxScore)
   } catch (error) {
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
-    result = generateResult(status, testName, command, errorMessage, endTime - startTime, currentScore, maxScore)
+    result = generateResult(status, testName, command, errorMessage, endTime - startTime, weight, currentScore, maxScore)
   } 
 
   core.setOutput('result', btoa(JSON.stringify(result)))

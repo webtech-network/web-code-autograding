@@ -7,14 +7,17 @@ function getTableTotals(runnerResults, pushToTable) {
 
   return runnerResults.map(({ runner, results }) => {
     const maxScore = getMaxScoreForTest(results);
-    // const weight = getTestWeight(maxScore, totalMaxScore);
+    //TODO: rever a questão do peso para testes unitarios
+    //const weight = getTestWeight(maxScore, totalMaxScore);
+    const weight = results.weight;
     const score = getTestScore(results);
     const testName = runner.trim();
 
-    pushToTable([testName, score, maxScore]);
+    pushToTable([testName, weight, score, maxScore]);
 
     return {
       score,
+      weight,
       maxScore,
     };
   });
@@ -23,17 +26,17 @@ function getTableTotals(runnerResults, pushToTable) {
 function AggregateResults(runnerResults) {
   try {
     const table = new Table({
-      head: ["Test Runner Name", "Test Score", "Max Score"],
-      colWidths: [20, 13, 13],
+      head: ["Teste realizado", "Peso", "Nota", "Valor Max"],
+      colWidths: [20, 13, 13, 13],
     });
 
     const totals = getTableTotals(runnerResults, (row) => table.push(row));
 
     // const totalPercent = totals.reduce(totalPercentageReducer, 0).toFixed(2) + "%";
-    const totalTestScores = totals.reduce((acc, curr) => acc + curr.score, 0)
-    const totalMaxScores = totals.reduce((acc, curr) => acc + curr.maxScore, 0)
+    const totalTestScores = (weight/100) * totals.reduce((acc, curr) => acc + curr.score, 0)
+    const totalMaxScores = (weight/100) * totals.reduce((acc, curr) => acc + curr.maxScore, 0)
 
-    table.push(["Total: ", `${totalTestScores}`, `${totalMaxScores}`]);
+    table.push(["Total: ", '--', `${totalTestScores}`, `${totalMaxScores}`]);
     
     console.log(table.toString());
   } catch (error) {

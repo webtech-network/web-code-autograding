@@ -15,7 +15,7 @@ inputs:
     description: "Describe whether command parameter is a command-line (cmd) or a funcion (function)"
     required: true
   weight:
-    description: "Peso da avaliação no cálculo geral"
+    description: "Peso da avaliação no cálculo geral. Se não informado, considera-se 100"
     required: false
   timeout:
     description: "Duration (in minutes) before the test is terminated. Defaults to 10 minutes with a maximum limit of 6 hours."

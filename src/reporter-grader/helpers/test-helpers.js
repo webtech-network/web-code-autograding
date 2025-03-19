@@ -15,6 +15,8 @@ const getTestScore = (runnerResult) => {
   }, 0);
 
   return score
+  //TODO: verificar cálculo de score para o caso de testes unitários 
+  // cujo valor era calculado como 1 ou 0
   return (score / tests.length) * (getMaxScoreForTest(runnerResult) || 0);
 };
 

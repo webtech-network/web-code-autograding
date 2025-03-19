@@ -9,6 +9,23 @@ function validateGit(rules) {
     let report = [];
     let score = baseScore;
 
+    // 📌 1. Verificação das Branches Obrigatórias
+    if (rules.requiredBranches) {
+        const branches = execSync('git branch -r')
+            .toString()
+            .split("\n")
+            .map(b => b.trim().replace("origin/", ""));
+
+        rules.requiredBranches.forEach(branch => {
+            if (!branches.includes(branch)) {
+                report.push(`⚠️ Branch obrigatória ausente: ${branch} (-5 pontos)`);
+                score -= 5;
+            } else {
+                report.push(`✅ Branch encontrada: ${branch}`);
+            }
+        });
+    }
+
     // 📌 2. Verificação do Número de Commits
     if (rules.minCommits) {
         const commitCount = parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
@@ -19,23 +36,6 @@ function validateGit(rules) {
             report.push(`✅ Commits suficientes (${commitCount})`);
         }
     }
-
-    // 📌 1. Verificação das Branches Obrigatórias
-    // if (rules.requiredBranches) {
-    //     const branches = execSync('git branch -r')
-    //         .toString()
-    //         .split("\n")
-    //         .map(b => b.trim().replace("origin/", ""));
-
-    //     rules.requiredBranches.forEach(branch => {
-    //         if (!branches.includes(branch)) {
-    //             report.push(`⚠️ Branch obrigatória ausente: ${branch} (-5 pontos)`);
-    //             score -= 5;
-    //         } else {
-    //             report.push(`✅ Branch encontrada: ${branch}`);
-    //         }
-    //     });
-    // }
 
     // 📌 3. Verificação do Número de Tags
     if (rules.minTags) {
