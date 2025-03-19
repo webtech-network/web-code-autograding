@@ -1,141 +1,152 @@
 const { execSync } = require('child_process');
-
-function getGitBranches() {
-console.log (`-------Executando getGitBranches`)    
-    return execSync('git branch --format="%(refname:short)"')
-        .toString()
-        .trim()
-        .split('\n');
-}
-
-function getGitCommitCount() {
-console.log (`-------Executando getGitCommitCount`)    
-    return parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
-}
-
-function getGitMerges() {
-console.log (`-------Executando getGitMerges`)    
-    return execSync('git log --merges --pretty=format:"%H"')
-        .toString()
-        .trim()
-        .split('\n')
-        .filter(hash => hash);
-}
-
-function getGitLinesChanged() {
-console.log (`-------Executando getGitLinesChanged`)    
-    return parseInt(
-        execSync('git log --pretty=tformat: --numstat | awk \'{sum+=$1+$2} END {print sum}\'')
-            .toString()
-            .trim(),
-        10
-    );
-}
-
-// função para obter a quantidade de tags no repositório
-function getGitTagCount() {
-console.log (`-------Executando getGitTagCount`)    
-    return parseInt(execSync('git tag | wc -l').toString().trim(), 10);
-}
-
-// função para identificar itens no arquivo .gitingnore
-function getGitIgnore() {
-console.log (`-------Executando getGitIgnore`)    
-    return execSync('cat .gitignore')
-        .toString()
-        .trim()  
-        .split('\n')
-        .filter(item => item);
-}
-
-// função para obter a lista completa de arquivos na branch master
-function getGitFiles() {
-console.log (`-------Executando getGitFiles`)    
-    return execSync('git ls-tree --name-only -r HEAD')
-        .toString()
-        .trim()
-        .split('\n')
-        .filter(file => file);
-}
+const fs = require('fs');
 
 function validateGit(rules) {
-console.log (`-------Executando validateGit`)    
-    let results = { passed: [], failed: [] };
+    let baseScore = 80;
+    let minScore = 10;
+    let maxBonus = 20;
+    let maxPenalty = -20;
+    let report = [];
+    let score = baseScore;
 
-    // Verifica branches obrigatórias
-    const branches = getGitBranches();
-    rules.requiredBranches.forEach(branch => {
-        if (branches.includes(branch)) {
-            results.passed.push(`Branch '${branch}' encontrada.`);
+    // 📌 1. Verificação das Branches Obrigatórias
+    if (rules.git.requiredBranches) {
+        const branches = execSync('git branch -r')
+            .toString()
+            .split("\n")
+            .map(b => b.trim().replace("origin/", ""));
+
+        rules.git.requiredBranches.forEach(branch => {
+            if (!branches.includes(branch)) {
+                report.push(`⚠️ Branch obrigatória ausente: ${branch} (-5 pontos)`);
+                score -= 5;
+            } else {
+                report.push(`✅ Branch encontrada: ${branch}`);
+            }
+        });
+    }
+
+    // 📌 2. Verificação do Número de Commits
+    if (rules.git.minCommits) {
+        const commitCount = parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
+        if (commitCount < rules.git.minCommits) {
+            report.push(`⚠️ Poucos commits no repositório (${commitCount}/${rules.git.minCommits}) (-5 pontos)`);
+            score -= 5;
         } else {
-            results.failed.push(`Branch '${branch}' não encontrada.`);
+            report.push(`✅ Commits suficientes (${commitCount})`);
         }
-    });
-
-    
-    // Verifica quantidade minima de commits
-    const commitCount = getGitCommitCount();
-    if (commitCount < rules.minCommits) {
-        results.failed.push(`Quantidade de commits (${commitCount}) abaixo do mínimo esperado (${rules.minCommits}).`);
-    } else {
-        results.passed.push(`Quantidade de commits (${commitCount}) dentro do esperado.`);
     }
 
-    // Verifica merges sem fast-forward e quantidade mínima de merges
-    const merges = getGitMerges();
-    if (rules.forbidNoFFMerge) {
-        if (merges.length > 0) {
-            results.failed.push(`Foram encontrados ${merges.length} merges no histórico. Verifique se foram revisados corretamente.`);
+    // 📌 3. Verificação do Número de Tags
+    if (rules.git.minTags) {
+        const tagCount = parseInt(execSync('git tag | wc -l').toString().trim(), 10);
+        if (tagCount < rules.git.minTags) {
+            report.push(`⚠️ Poucas tags encontradas (${tagCount}/${rules.git.minTags}) (-3 pontos)`);
+            score -= 3;
         } else {
-            results.passed.push(`Nenhum merge sem fast-forward detectado.`);
+            report.push(`✅ Tags suficientes (${tagCount})`);
         }
     }
-    if (merges.length < rules.minMerges) {
-        results.failed.push(`Quantidade de merges (${merges.length}) abaixo do mínimo esperado (${rules.minMerges}).`);
-    }
-    else {
-        results.passed.push(`Quantidade de merges (${merges.length}) dentro do esperado.`);
-    }
 
-    // Verifica quantidade mínima de linhas alteradas no histórico
-    const linesChanged = getGitLinesChanged();
-    if (linesChanged < rules.minLinesChanged) {
-        results.failed.push(`Quantidade de linhas alteradas (${linesChanged}) abaixo do mínimo esperado (${rules.minLinesChanged}).`);
-    }  
-    else {
-        results.passed.push(`Quantidade de linhas alteradas (${linesChanged}) dentro do esperado.`);
-    }
-
-    // Verifica quantidade de tags no repositório
-    const tagCount = getGitTagCount();
-    if (tagCount >= rules.minTags && tagCount <= rules.maxTags) {
-        results.passed.push(`Quantidade de tags (${tagCount}) dentro do esperado.`);
-    } else {
-        results.failed.push(`Quantidade de tags (${tagCount}) fora do intervalo esperado (${rules.minTags} - ${rules.maxTags}).`);
-    }
-
-    // Verifica arquivos obrigatórios na branch master
-    const files = getGitFiles();
-    rules.requiredFiles.forEach(file => {
-        if (files.includes(file)) {
-            results.passed.push(`Arquivo '${file}' encontrado na branch master.`);
+    // 📌 4. Proibição de Merges sem Fast-Forward
+    if (rules.git.forbidNoFFMerge) {
+        const noFFMerges = execSync('git log --merges --pretty=%h').toString().trim().split("\n");
+        if (noFFMerges.length > 0) {
+            report.push(`⚠️ Merges sem fast-forward detectados (-4 pontos)`);
+            score -= 4;
         } else {
-            results.failed.push(`Arquivo '${file}' não encontrado na branch master.`);
+            report.push(`✅ Nenhum merge sem fast-forward detectado`);
         }
-    });
+    }
 
-    // Verifica itens constantes do gitignore
-    const gitIgnore = getGitIgnore();
-    rules.requiredGitIgnoreEntries.forEach(item => {
-        if (gitIgnore.includes(item)) {
-            results.passed.push(`Item '${item}' encontrado no .gitignore.`);
+    // 📌 5. Verificação do Número de Merges
+    if (rules.git.minMerges) {
+        const mergeCount = parseInt(execSync('git log --merges --oneline | wc -l').toString().trim(), 10);
+        if (mergeCount < rules.git.minMerges) {
+            report.push(`⚠️ Poucos merges realizados (${mergeCount}/${rules.git.minMerges}) (-3 pontos)`);
+            score -= 3;
         } else {
-            results.failed.push(`Item '${item}' não encontrado no .gitignore.`);
+            report.push(`✅ Merges suficientes (${mergeCount})`);
         }
-    });
+    }
 
+    // 📌 6. Verificação do Número de Linhas Modificadas
+    if (rules.git.minLinesChanged) {
+        const linesChanged = parseInt(execSync("git log --stat --pretty=tformat: | awk '{ sum += $1 } END { print sum }'").toString().trim(), 10);
+        if (linesChanged < rules.git.minLinesChanged) {
+            report.push(`⚠️ Poucas linhas modificadas (${linesChanged}/${rules.git.minLinesChanged}) (-3 pontos)`);
+            score -= 3;
+        } else {
+            report.push(`✅ Linhas modificadas suficientes (${linesChanged})`);
+        }
+    }
 
-    return results;
+    // 📌 7. Verificação de Entradas no `.gitignore`
+    if (rules.git.requiredGitIgnoreEntries) {
+        if (fs.existsSync('.gitignore')) {
+            const gitignoreContent = fs.readFileSync('.gitignore', 'utf-8');
+            rules.git.requiredGitIgnoreEntries.forEach(entry => {
+                if (!gitignoreContent.includes(entry)) {
+                    report.push(`⚠️ Entrada ausente no .gitignore: ${entry} (-2 pontos)`);
+                    score -= 2;
+                } else {
+                    report.push(`✅ Entrada encontrada no .gitignore: ${entry}`);
+                }
+            });
+        } else {
+            report.push(`⚠️ Arquivo .gitignore ausente (-2 pontos)`);
+            score -= 2;
+        }
+    }
+
+    // 📌 8. Verificação de Arquivos Obrigatórios
+    if (rules.git.requiredFiles) {
+        rules.git.requiredFiles.forEach(file => {
+            if (!fs.existsSync(file)) {
+                report.push(`⚠️ Arquivo obrigatório ausente: ${file} (-4 pontos)`);
+                score -= 4;
+            } else {
+                report.push(`✅ Arquivo encontrado: ${file}`);
+            }
+        });
+    }
+
+    // 📌 9. Bonificação por Boas Práticas
+    let totalBonus = 0;
+
+    // ✅ Commits semânticos
+    const semanticCommits = execSync('git log --oneline').toString().split("\n").filter(line => /\b(feat|fix|refactor|docs|test|chore):/.test(line));
+    if (semanticCommits.length > 0) {
+        report.push(`🔹 Commits semânticos detectados (+3 pontos)`);
+        totalBonus += 3;
+    }
+
+    // ✅ Uso de Pull Requests
+    if (fs.existsSync('.github/workflows') || fs.existsSync('Jenkinsfile')) {
+        report.push(`🔹 CI/CD configurado (+3 pontos)`);
+        totalBonus += 3;
+    }
+
+    // ✅ Presença de `CONTRIBUTING.md` e `LICENSE`
+    if (fs.existsSync('CONTRIBUTING.md')) {
+        report.push(`🔹 Arquivo CONTRIBUTING.md encontrado (+2 pontos)`);
+        totalBonus += 2;
+    }
+    if (fs.existsSync('LICENSE')) {
+        report.push(`🔹 Arquivo LICENSE encontrado (+2 pontos)`);
+        totalBonus += 2;
+    }
+
+    totalBonus = Math.min(totalBonus, maxBonus);
+    score += totalBonus;
+
+    // 📌 Garantia de que a nota final fique entre 10 e 100
+    score = Math.max(minScore, Math.min(score, 100));
+
+    return {
+        report,
+        score
+    };
 }
 
 module.exports = validateGit;
