@@ -5,7 +5,7 @@ function validateCSS(css, rules) {
     css = css.replace(/\s+/g, ' ').trim().toLowerCase();
 
     // Configuração inicial
-    let baseScore = 70;
+    let baseScore = 60;
     let minScore = 10;
     let maxBonus = 30;
     let maxItemBonus = 6;
@@ -20,8 +20,8 @@ function validateCSS(css, rules) {
         if (regex.test(css)) {
             report.push("✅ Reset/normalize.css encontrado");
         } else {
-            report.push("❌ Reset/normalize.css não encontrado (-3 pontos)");
-            score -= 3;
+            report.push("❌ Reset/normalize.css não encontrado (-5 pontos)");
+            score -= 5;
         }
     }
 
@@ -29,8 +29,8 @@ function validateCSS(css, rules) {
         let pxMatches = css.match(/\b\d+px\b/g) || [];
         let relativeMatches = css.match(/\b\d+(%|em|rem|vh|vw)\b/g) || [];
         if (pxMatches.length > relativeMatches.length) {
-            report.push("❌ Uso excessivo de `px` em vez de unidades relativas (-3 pontos)");
-            score -= 3;
+            report.push("❌ Uso excessivo de `px` em vez de unidades relativas (-5 pontos)");
+            score -= 5;
         } else {
             report.push("✅ Uso adequado de unidades relativas");
         }
@@ -39,8 +39,8 @@ function validateCSS(css, rules) {
     if (rules.requiredChecks.checkCodeComments) {
         let commentMatches = css.match(/\/\*[\s\S]*?\*\//g) || [];
         if (commentMatches.length < 2) {
-            report.push("❌ Poucos ou nenhum comentário explicativo (-3 pontos)");
-            score -= 3;
+            report.push("❌ Poucos ou nenhum comentário explicativo (-5 pontos)");
+            score -= 5;
         } else {
             report.push("✅ Comentários presentes no código");
         }
@@ -49,8 +49,20 @@ function validateCSS(css, rules) {
     if (rules.requiredChecks.checkMinCSSRules) {
         let ruleMatches = css.match(/[a-zA-Z0-9_-]+\s*{[^}]+}/g) || [];
         if (ruleMatches.length < rules.requiredChecks.minCSSRules) {
-            report.push(`❌ Poucas regras CSS encontradas (${ruleMatches.length}/${rules.requiredChecks.minRules}) (-10 pontos)`);
-            score -= 10;
+            // mais 60% do mínimo [-10 pontos] 
+            // mais de 40% do mínimo [-20 pontos]  
+            // abaixo de 40% do mínimo [-30 pontos]
+            let range = ruleMatches.length / rules.requiredChecks.minCSSRules;
+            if (range > 0.6) {
+                report.push(`❌ Volume de regras de 60 a 99.9% do volume mínimo (${range}%) (-15 pontos)`);
+                score -= 15;
+            } else if (range > 0.4) {
+                report.push(`❌ Volume de regras de 40 a 59.9% do volume mínimo (${range}%) (-20 pontos)`);
+                score -= 20;
+            } else {
+                report.push(`❌ Volume de regras abaixo de 40% do volume mínimo (${range}%) (-30 pontos)`);
+                score -= 30;
+            }
         } else {
             report.push(`✅ Número suficiente de regras CSS (${ruleMatches.length})`);
         }
@@ -60,8 +72,8 @@ function validateCSS(css, rules) {
         let requiredProperties = rules.requiredChecks.requiredProperties;
         let foundProperties = requiredProperties.filter(prop => new RegExp(`\\b${prop}\\s*:`, "gi").test(css));
         if (foundProperties.length < requiredProperties.length) {
-            report.push(`❌ Poucas propriedades comuns encontradas (${foundProperties.length}/3) (-5 pontos)`);
-            score -= 5;
+            report.push(`❌ Poucas propriedades comuns encontradas (${foundProperties.length}/3) (-10 pontos)`);
+            score -= 10;
         } else {
             report.push("✅ Propriedades comuns encontradas");
         }
