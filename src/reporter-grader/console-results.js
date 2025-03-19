@@ -13,7 +13,7 @@ exports.ConsoleResults = function ConsoleResults(runnerResults) {
       // const weight = getTestWeight(maxScore, totalMaxScore);
       const score = getTestScore(results)
       if (index > 0) {
-        console.log(`${COLORS.magenta}🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀${COLORS.reset}\n`)
+        console.log(`${COLORS.magenta}🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀${COLORS.reset}\n\n`)
       }
 
       console.log(`🔄 Processing: ${runner}`)
@@ -52,12 +52,12 @@ exports.ConsoleResults = function ConsoleResults(runnerResults) {
       }
     })
 
-    console.log(`${COLORS.magenta}Test runner summary${COLORS.magenta}`)
+    console.log(`${COLORS.magenta}Resumo de Testes${COLORS.magenta}`)
 
     // Calculate and display grand total points
     AggregateResults(runnerResults)
     console.log(
-      `${COLORS.cyan}🏆 Grand total tests passed: ${grandTotalPassedTests}/${grandTotalTests}${COLORS.reset}\n`,
+      `${COLORS.cyan}🏆 Total final: ${grandTotalPassedTests}/${grandTotalTests}${COLORS.reset}\n`,
     )
   } catch (error) {
     throw new Error(error.message)
