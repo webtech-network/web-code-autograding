@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 
 function validateGit(rules) {
-    let baseScore = 80;
+    let baseScore = 60;
     let minScore = 10;
     let maxBonus = 20;
     let maxPenalty = -20;
@@ -30,8 +30,8 @@ function validateGit(rules) {
     if (rules.minCommits) {
         const commitCount = parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
         if (commitCount < rules.minCommits) {
-            report.push(`⚠️ Poucos commits no repositório (${commitCount}/${rules.minCommits}) (-5 pontos)`);
-            score -= 5;
+            report.push(`⚠️ Poucos commits no repositório (${commitCount}/${rules.minCommits}) (-10 pontos)`);
+            score -= 10;
         } else {
             report.push(`✅ Commits suficientes (${commitCount})`);
         }
@@ -41,8 +41,8 @@ function validateGit(rules) {
     if (rules.minTags) {
         const tagCount = parseInt(execSync('git tag | wc -l').toString().trim(), 10);
         if (tagCount < rules.minTags) {
-            report.push(`⚠️ Poucas tags encontradas (${tagCount}/${rules.minTags}) (-3 pontos)`);
-            score -= 3;
+            report.push(`⚠️ Poucas tags encontradas (${tagCount}/${rules.minTags}) (-10 pontos)`);
+            score -= 10;
         } else {
             report.push(`✅ Tags suficientes (${tagCount})`);
         }
@@ -74,28 +74,31 @@ function validateGit(rules) {
     if (rules.minLinesChanged) {
         const linesChanged = parseInt(execSync("git log --stat --pretty=tformat: | awk '{ sum += $1 } END { print sum }'").toString().trim(), 10);
         if (linesChanged < rules.minLinesChanged) {
-            report.push(`⚠️ Poucas linhas modificadas (${linesChanged}/${rules.minLinesChanged}) (-3 pontos)`);
-            score -= 3;
+            report.push(`⚠️ Poucas linhas modificadas (${linesChanged}/${rules.minLinesChanged}) (-10 pontos)`);
+            score -= 10;
         } else {
             report.push(`✅ Linhas modificadas suficientes (${linesChanged})`);
         }
     }
 
     // 📌 7. Verificação de Entradas no `.gitignore`
-    if (rules.requiredGitIgnoreEntries) {
+    if (rules.checkGitIgnore) {
         if (fs.existsSync('.gitignore')) {
-            const gitignoreContent = fs.readFileSync('.gitignore', 'utf-8');
-            rules.requiredGitIgnoreEntries.forEach(entry => {
-                if (!gitignoreContent.includes(entry)) {
-                    report.push(`⚠️ Entrada ausente no .gitignore: ${entry} (-2 pontos)`);
-                    score -= 2;
-                } else {
-                    report.push(`✅ Entrada encontrada no .gitignore: ${entry}`);
-                }
-            });
+            report.push(`✅ Arquivo .gitignore presente`);
+            if (requiredGitIgnoreEntries) {
+                const gitignoreContent = fs.readFileSync('.gitignore', 'utf-8');
+                rules.requiredGitIgnoreEntries.forEach(entry => {
+                    if (!gitignoreContent.includes(entry)) {
+                        report.push(`⚠️ Entrada ausente no .gitignore: ${entry} (-2 pontos)`);
+                        score -= 2;
+                    } else {
+                        report.push(`✅ Entrada encontrada no .gitignore: ${entry}`);
+                    }
+                });
+            }
         } else {
-            report.push(`⚠️ Arquivo .gitignore ausente (-2 pontos)`);
-            score -= 2;
+            report.push(`⚠️ Arquivo .gitignore ausente (-10 pontos)`);
+            score -= 10;
         }
     }
 
@@ -103,8 +106,8 @@ function validateGit(rules) {
     if (rules.requiredFiles) {
         rules.requiredFiles.forEach(file => {
             if (!fs.existsSync(file)) {
-                report.push(`⚠️ Arquivo obrigatório ausente: ${file} (-4 pontos)`);
-                score -= 4;
+                report.push(`⚠️ Arquivo obrigatório ausente: ${file} (-3 pontos)`);
+                score -= 3;
             } else {
                 report.push(`✅ Arquivo encontrado: ${file}`);
             }
@@ -123,7 +126,7 @@ function validateGit(rules) {
 
     // ✅ Uso de Pull Requests
     if (fs.existsSync('.github/workflows') || fs.existsSync('Jenkinsfile')) {
-        report.push(`🔹 CI/CD configurado (+3 pontos)`);
+        report.push(`🔹 Existência de workflows configurados (+3 pontos)`);
         totalBonus += 3;
     }
 
