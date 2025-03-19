@@ -11,7 +11,7 @@ function loadFile(filePath) {
 }
 
 function loadDescriptor() {
-    return JSON.parse(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/test-config.json`, 'utf-8'));
+    return JSON.parse(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/.github/test-config.json`, 'utf-8'));
 }
 
 function validateHTMLFile() {
