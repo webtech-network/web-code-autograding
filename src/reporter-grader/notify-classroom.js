@@ -4,19 +4,21 @@ const github = require("@actions/github");
 exports.NotifyClassroom = async function NotifyClassroom(runnerResults) {
   // combine max score and total score from each {runner, results} pair
   // if max_score is greater than 0 run the rest of this code
-  const { totalPoints, maxPoints } = runnerResults.reduce(
+  let { totalPoints, maxPoints } = runnerResults.reduce(
     (acc, { results }) => {
       if (!results.max_score) return acc;
 
       acc.maxPoints += results.max_score * (results.weight / 100);
       results.tests.forEach(({ score }) => {
-        acc.totalPoints += (score * (results.weight / 100)).toFixed(2);
+        acc.totalPoints += score * (results.weight / 100);
       });
 
       return acc;
     },
     { totalPoints: 0, maxPoints: 0 }
   );
+  totalPoints = Math.round(totalPoints * 100) / 100;
+  maxPoints = Math.round(maxPoints * 100) / 100;
   if (!maxPoints) return;
 
   // Our action will need to API access the repository so we require a token
