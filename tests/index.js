@@ -11,28 +11,29 @@ function loadFile(filePath) {
 }
 
 function loadDescriptor() {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, `${process.env.GITHUB_WORKSPACE}/test-config.json`), 'utf-8'));
+    console.log ('Path Repositorio base: ', process.env.GITHUB_WORKSPACE)
+    return JSON.parse(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/test-config.json`, 'utf-8'));
 }
 
 function validateHTMLFile() {
     const descriptor = loadDescriptor();
-    const html = loadFile(path.join(__dirname, `${process.env.GITHUB_WORKSPACE}/public/index.html`));
+    const html = loadFile(`${process.env.GITHUB_WORKSPACE}/public/index.html`);
     return validateHTML(html, descriptor.html);
 }
 
 function validateCSSFile() {
     const descriptor = loadDescriptor();
-    const css = loadFile(path.join(__dirname, `${process.env.GITHUB_WORKSPACE}/public/style.css`));
+    const css = loadFile(`${process.env.GITHUB_WORKSPACE}/public/style.css`);
     return validateCSS(css, descriptor.css);
 }
 
 function validateJSFile() {
     const descriptor = loadDescriptor();
-    const js = loadFile(path.join(__dirname, `${process.env.GITHUB_WORKSPACE}/public/app.js`));
+    const js = loadFile(`${process.env.GITHUB_WORKSPACE}/public/app.js`);
     return validateJS(js, descriptor.js);
 }
 
-function validateGitRepo() {
+function validateGITRepo() {
     const descriptor = loadDescriptor();
     return validateGit(descriptor.git);
 }
@@ -41,5 +42,5 @@ module.exports = {
     validateHTMLFile,
     validateCSSFile,
     validateJSFile,
-    validateGitRepo
+    validateGITRepo
 };
