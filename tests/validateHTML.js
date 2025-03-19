@@ -121,6 +121,22 @@ function validateHTML(html, rules) {
         }
     });
 
+    // Reporta detalhes da pontuação base, bônus e penalidades
+    report.push(`\n📊 Pontuação Final: ${score}`)
+    report.push(`🔺 Bônus: +${bonusPoints}`
+        + (bonusPoints > 0 ? ` (${rules.relevantTags.length} tags, ${rules.relevantAttributes.length} atributos)` : ''));
+    report.push(`🔻 Penalidades: ${penaltyPoints}`
+        + (penaltyPoints < 0 ? ` (${rules.forbiddenTags.length} tags, ${rules.forbiddenAttributes.length} atributos)` : '') 
+        + '\n');
+
+    // Informa detalhes das regras básicas como pontuação de base, mínimos e máximos de bônus e penalidades
+    report.push(`📏 Regras de Pontuação:`)
+    report.push(` Nota base com itens requridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
+    report.push(`🔺 Bônus Máximo: ${maxBonus}`);
+    report.push(`🔻 Penalidade Máxima: ${maxPenalty}`);
+    report.push(`\n📝 Observação: A pontuação final é ajustada para ficar entre ${minScore} e 100 pontos.`);
+
+
     // Aplicação do Bônus e Penalidade dentro dos limites
     bonusPoints = Math.min(bonusPoints, maxBonus);
     penaltyPoints = Math.max(penaltyPoints, maxPenalty);
