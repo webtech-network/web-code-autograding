@@ -75,7 +75,7 @@ console.log ('Ambiente de Execução', testName, process.env);
       const validator = require(`../../tests`);
       const {report, score} = validator[command]()
       output = report.join('\n')
-console.log ('REPORT de Execução', testName, report);      
+console.log ('REPORT de Execução', testName, report, score);      
       currentScore = score
     } 
     else {
