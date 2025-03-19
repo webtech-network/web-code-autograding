@@ -114,6 +114,16 @@ console.log (`-------Executando validateGit`)
         results.failed.push(`Quantidade de tags (${tagCount}) fora do intervalo esperado (${rules.minTags} - ${rules.maxTags}).`);
     }
 
+    // Verifica arquivos obrigatórios na branch master
+    const files = getGitFiles();
+    rules.requiredFiles.forEach(file => {
+        if (files.includes(file)) {
+            results.passed.push(`Arquivo '${file}' encontrado na branch master.`);
+        } else {
+            results.failed.push(`Arquivo '${file}' não encontrado na branch master.`);
+        }
+    });
+
     // Verifica itens constantes do gitignore
     const gitIgnore = getGitIgnore();
     rules.requiredGitIgnoreEntries.forEach(item => {
@@ -124,15 +134,6 @@ console.log (`-------Executando validateGit`)
         }
     });
 
-    // Verifica arquivos obrigatórios na branch master
-    const files = getGitFiles();
-    rules.requiredFiles.forEach(file => {
-        if (files.includes(file)) {
-            results.passed.push(`Arquivo '${file}' encontrado na branch master.`);
-        } else {
-            results.failed.push(`Arquivo '${file}' não encontrado na branch master.`);
-        }
-    });
 
     return results;
 }
