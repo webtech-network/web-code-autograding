@@ -12,6 +12,7 @@ try {
       return { runner, results: JSON.parse(json) };
     });
 
+console.log('Runner Results: ---------------\n', runnerResults);    
 
   ConsoleResults(runnerResults);
   NotifyClassroom(runnerResults);
