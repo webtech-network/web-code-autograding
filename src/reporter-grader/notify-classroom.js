@@ -8,9 +8,9 @@ exports.NotifyClassroom = async function NotifyClassroom(runnerResults) {
     (acc, { results }) => {
       if (!results.max_score) return acc;
 
-      acc.maxPoints += results.max_score;
+      acc.maxPoints += results.max_score * (results.weight / 100);
       results.tests.forEach(({ score }) => {
-        acc.totalPoints += score;
+        acc.totalPoints += score * (results.weight / 100);
       });
 
       return acc;

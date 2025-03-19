@@ -31,6 +31,7 @@ function AggregateResults(runnerResults) {
     });
 
     const totals = getTableTotals(runnerResults, (row) => table.push(row));
+console.log ('dados', totals)
 
     // const totalPercent = totals.reduce(totalPercentageReducer, 0).toFixed(2) + "%";
     const totalTestScores = totals.reduce((acc, curr) => acc + curr.score * (curr.weight/100), 0)

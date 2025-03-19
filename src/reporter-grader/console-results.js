@@ -38,7 +38,7 @@ exports.ConsoleResults = function ConsoleResults(runnerResults) {
           }
         }
         if (test.test_code) {
-          console.log(`Test code:\n${test.test_code}\n`)
+          console.log(`Test code: ${test.test_code}\n`)
         }
       })
 
@@ -48,7 +48,7 @@ exports.ConsoleResults = function ConsoleResults(runnerResults) {
 
       // Calculate and display points for the current runner
       if (maxScore !== 0) {
-        console.log(`Total points for ${runner}: ${score.toFixed(2)}/${maxScore}\n`);
+        console.log(`Total [${runner}]: ${score.toFixed(2)}/${maxScore}\n`);
       }
     })
 
@@ -56,9 +56,9 @@ exports.ConsoleResults = function ConsoleResults(runnerResults) {
 
     // Calculate and display grand total points
     AggregateResults(runnerResults)
-    console.log(
-      `${COLORS.cyan}🏆 Total final: ${grandTotalPassedTests}/${grandTotalTests}${COLORS.reset}\n`,
-    )
+    // console.log(
+    //   `${COLORS.cyan}🏆 Total final: ${grandTotalPassedTests}/${grandTotalTests}${COLORS.reset}\n`,
+    // )
   } catch (error) {
     throw new Error(error.message)
   }

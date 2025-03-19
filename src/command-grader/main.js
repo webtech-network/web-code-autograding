@@ -77,7 +77,7 @@ function run() {
       const {report, score} = validator[command]()
       output = report.join('\n')
       console.log (`------ Relatório de Verficação [${testName}] ------\n`, 
-        '\nPontos observados', report, `Nota final: ${score} em ${maxScore}`);  
+        '\nPontos observados\n', report, `\nNota final: ${score} em ${maxScore}`);  
 
       currentScore = score
     } 
