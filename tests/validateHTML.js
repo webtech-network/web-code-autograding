@@ -25,8 +25,8 @@ function validateHTML(html, rules) {
     // Configuração inicial
     let baseScore = 60;
     let minScore = 10;
-    let maxBonus = 20;
-    let maxPenalty = -20;
+    let maxBonus = 40;
+    let maxPenalty = -30;
     let report = [];
 
     let score = baseScore;
