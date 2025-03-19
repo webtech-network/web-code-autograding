@@ -18,12 +18,14 @@ function loadDescriptor() {
 function validateHTMLFile() {
     const descriptor = loadDescriptor();
     const html = loadFile(`${process.env.GITHUB_WORKSPACE}/public/index.html`);
+    console.log ('HTML:', html);
     return validateHTML(html, descriptor.html);
 }
 
 function validateCSSFile() {
     const descriptor = loadDescriptor();
     const css = loadFile(`${process.env.GITHUB_WORKSPACE}/public/style.css`);
+    console.log ('CSS:', css);   
     return validateCSS(css, descriptor.css);
 }
 
