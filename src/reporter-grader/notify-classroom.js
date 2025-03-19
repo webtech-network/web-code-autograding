@@ -8,9 +8,9 @@ exports.NotifyClassroom = async function NotifyClassroom(runnerResults) {
     (acc, { results }) => {
       if (!results.max_score) return acc;
 
-      acc.maxPoints += results.max_score * (results.weight * 0.01);
+      acc.maxPoints += results.max_score * (results.weight / 100);
       results.tests.forEach(({ score }) => {
-        acc.totalPoints += score * (results.weight * 0.01);
+        acc.totalPoints += (score * (results.weight / 100)).toFixed(2);
       });
 
       return acc;
@@ -67,7 +67,7 @@ exports.NotifyClassroom = async function NotifyClassroom(runnerResults) {
   // Update the checkrun, we'll assign the title, summary and text even though we expect
   // the title and summary to be overwritten by GitHub Actions (they are required in this call)
   // We'll also store the total in an annotation to future-proof
-  const text = `Points ${totalPoints}/${maxPoints}`;
+  const text = `Points ${totalPoints.toFixed(2)}/${maxPoints.toFixed(2)}`;
   await octokit.rest.checks.update({
     owner,
     repo,
