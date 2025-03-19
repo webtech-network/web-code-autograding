@@ -11,23 +11,23 @@ function loadFile(filePath) {
 }
 
 function loadDescriptor() {
-    console.log ('Path Repositorio base: ', process.env.GITHUB_WORKSPACE)
+// console.log ('Path Repositorio base: ', process.env.GITHUB_WORKSPACE)
     return JSON.parse(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/test-config.json`, 'utf-8'));
 }
 
 function validateHTMLFile() {
     const descriptor = loadDescriptor();
-    console.log ('TESTE HTML --- INICIANDO');
+// console.log ('TESTE HTML --- INICIANDO');
     const html = loadFile(`${process.env.GITHUB_WORKSPACE}/public/index.html`);
-    console.log ('HTML:', html);
+// console.log ('HTML:', html);
     return validateHTML(html, descriptor.html);
 }
 
 function validateCSSFile() {
     const descriptor = loadDescriptor();
-    console.log ('TESTE CSS --- INICIANDO');
+// console.log ('TESTE CSS --- INICIANDO');
     const css = loadFile(`${process.env.GITHUB_WORKSPACE}/public/style.css`);
-    console.log ('CSS:', css);   
+// console.log ('CSS:', css);   
     return validateCSS(css, descriptor.css);
 }
 

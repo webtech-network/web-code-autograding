@@ -75,7 +75,7 @@ function run() {
       const validator = require(`../../tests`);
       const {report, score} = validator[command]()
       output = report.join('\n')
-console.log ('REPORT DE Execução ----------- \n', testName, report, score);  
+console.log ('REPORT DE EXECUÇÃO ----------- \n', testName, report, score);  
 
       currentScore = score
     } 
