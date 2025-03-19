@@ -11,24 +11,24 @@ function loadFile(filePath) {
 }
 
 function loadDescriptor() {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, '../test-config.json'), 'utf-8'));
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '${process.env.GITHUB_WORKSPACE}/test-config.json'), 'utf-8'));
 }
 
 function validateHTMLFile() {
     const descriptor = loadDescriptor();
-    const html = loadFile(path.join(__dirname, '../public/index.html'));
+    const html = loadFile(path.join(__dirname, '${process.env.GITHUB_WORKSPACE}/public/index.html'));
     return validateHTML(html, descriptor.html);
 }
 
 function validateCSSFile() {
     const descriptor = loadDescriptor();
-    const css = loadFile(path.join(__dirname, '../public/style.css'));
+    const css = loadFile(path.join(__dirname, '${process.env.GITHUB_WORKSPACE}/public/style.css'));
     return validateCSS(css, descriptor.css);
 }
 
 function validateJSFile() {
     const descriptor = loadDescriptor();
-    const js = loadFile(path.join(__dirname, '../public/app.js'));
+    const js = loadFile(path.join(__dirname, '${process.env.GITHUB_WORKSPACE}/public/app.js'));
     return validateJS(js, descriptor.js);
 }
 
