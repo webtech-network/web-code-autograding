@@ -31,13 +31,13 @@ function validateCSS(css, rules) {
     let maxItemBonus = 6;
     let maxPenalty = -30;
     let maxItemPenalty = -6
-    
+
     let report = [];
     let score = baseScore;
 
     // 📌 1. Verificação de Requisitos Obrigatórios
     if (rules.requiredChecks.checkResetCSS) {
-        let regex = /@import\s+["']normalize\.css["']|[*]\s*{\s*margin:\s*0;\s*padding:\s*0;/;
+        let regex = /@import\s+["']normalize\.css["']|(?:\*|html|body)\s*{\s*margin:\s*0;\s*padding:\s*0;/;
         if (regex.test(css)) {
             report.push("✅ Reset/normalize.css encontrado");
         } else {
@@ -92,8 +92,9 @@ function validateCSS(css, rules) {
     if (rules.requiredChecks.checkRequiredProperties) {
         let requiredProperties = rules.requiredChecks.requiredProperties;
         let foundProperties = requiredProperties.filter(prop => new RegExp(`\\b${prop}\\s*:`, "gi").test(css));
-        if (foundProperties.length < requiredProperties.length) {
-            report.push(`❌ Poucas propriedades comuns encontradas (${foundProperties.length}/3) (-10 pontos)`);
+        percentual = foundProperties.length / requiredProperties.length;
+        if (percentual < 0.6) {
+            report.push(`❌ Poucas propriedades comuns encontradas - abaixo de 60% (${foundProperties.length}) (-10 pontos)`);
             score -= 10;
         } else {
             report.push("✅ Propriedades comuns encontradas");
@@ -200,6 +201,12 @@ function validateCSS(css, rules) {
     report.push(`-------- 📏 Regras de Pontuação --------`)
     report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
     report.push(`🔺 Bônus Máximo: ${maxBonus}`);
+    report.push(`🔹 Possibilidades de bonificação: 
+        - Uso de variáveis CSS (+2 pontos por item)
+        - Uso de flexbox (+2 pontos por item)
+        - Uso de grid (+2 pontos por item)
+        - Uso de animações CSS (+2 pontos por item)
+        - Uso de media queries responsivas (+2 pontos por item)`);            
     report.push(`🔻 Penalidade Máxima: ${maxPenalty}`);
     report.push(`📝 Observação: A pontuação final é ajustada para ficar entre ${minScore} e 100 pontos
         com base nos bônus e penalidades aplicados.`);
