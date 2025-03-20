@@ -27,10 +27,11 @@ function validateCSS(css, rules) {
     // Configuração inicial
     let baseScore = 60;
     let minScore = 10;
-    let maxBonus = 30;
+    let maxBonus = 40;
     let maxItemBonus = 6;
     let maxPenalty = -30;
     let maxItemPenalty = -6
+    
     let report = [];
     let score = baseScore;
 
@@ -145,8 +146,6 @@ function validateCSS(css, rules) {
         }
     }
 
-    totalBonus = Math.min(totalBonus, maxBonus);
-    score += totalBonus;
 
     // 📌 3. Penalizações
     let totalPenalty = 0;
@@ -185,10 +184,29 @@ function validateCSS(css, rules) {
         }
     }
 
+    // Aplicação do Bônus e Penalidade dentro dos limites
+    totalBonus = Math.min(totalBonus, maxBonus);
     totalPenalty = Math.max(totalPenalty, maxPenalty);
-    score += totalPenalty;
 
-    // 📌 Garante que a nota fique entre 10 e 100
+    // Reporta detalhes da pontuação base, bônus e penalidades
+    report.push ('.');
+    report.push(`📊 Pontuação base: ${baseScore}`)
+    report.push(`🔺 Bônus: ${totalBonus}`);
+    report.push(`🔻 Penalidades: ${totalPenalty}`)
+    report.push(`📈 Nota final: ${score + totalBonus + totalPenalty} em 100`);
+
+    // Informa detalhes das regras básicas como pontuação de base, mínimos e máximos de bônus e penalidades
+    report.push ('.');
+    report.push(`-------- 📏 Regras de Pontuação --------`)
+    report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
+    report.push(`🔺 Bônus Máximo: ${maxBonus}`);
+    report.push(`🔻 Penalidade Máxima: ${maxPenalty}`);
+    report.push(`📝 Observação: A pontuação final é ajustada para ficar entre ${minScore} e 100 pontos
+        com base nos bônus e penalidades aplicados.`);
+    
+    
+    // 📌 Calcula nota final, garantindo que a nota final fique entre 10 e 100
+    score += totalBonus + totalPenalty;    
     score = Math.max(minScore, Math.min(score, 100));
 
     return {

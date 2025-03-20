@@ -48,8 +48,8 @@ function validateHTML(html, rules) {
     let minScore = 10;
     let maxBonus = 40;
     let maxPenalty = -30;
-    let report = [];
 
+    let report = [];
     let score = baseScore;
 
     // Contagem de ocorrências de tags
@@ -149,7 +149,7 @@ function validateHTML(html, rules) {
     penaltyPoints = Math.max(penaltyPoints, maxPenalty);
 
     // Reporta detalhes da pontuação base, bônus e penalidades
-    report.push (' ');
+    report.push ('.');
     report.push(`-------- 📏 Detalhes de Pontuação --------`)
     report.push(`📊 Pontuação base: ${score}`)
     report.push(`🔺 Bonificação: +${bonusPoints} pontos`
@@ -158,7 +158,7 @@ function validateHTML(html, rules) {
         + (penaltyPoints < 0 ? ` (${rules.forbiddenTags.length} tags, ${rules.forbiddenAttributes.length} atributos)` : ''));
 
     // Informa detalhes das regras básicas como pontuação de base, mínimos e máximos de bônus e penalidades
-    report.push (' ');
+    report.push ('.');
     report.push(`-------- 📏 Regras de Pontuação --------`)
     report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
     report.push(`🔺 Bonificação Máxima: ${maxBonus}`);
@@ -166,7 +166,7 @@ function validateHTML(html, rules) {
     report.push(`📝 Observação: A pontuação final é ajustada para ficar entre ${minScore} e 100 pontos.`);
 
     
-    // Calcula nota final, garantindo que a nota final fique entre 10 e 100
+    // 📌 Calcula nota final, garantindo que a nota final fique entre 10 e 100
     score += bonusPoints + penaltyPoints;
     score = Math.max(minScore, Math.min(score, 100));
 
