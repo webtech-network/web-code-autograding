@@ -88,59 +88,62 @@ function validateHTML(html, rules) {
     // 📌 Bonificação por Tags Relevantes
     let bonusPoints = 0;
     rules.relevantTags.forEach(tag => {
-        if (countOccurrences(tag) > 0) {
-            report.push(`🔹 Tag relevante encontrada: <${tag}> (+1 ponto)`);
-            bonusPoints += 1;
+        let occurrences = countOccurrences(tag);
+        if (occurrences > 0) {
+            report.push(`🔹 Tag relevante encontrada: <${tag}> (+1 ponto | limite 2 pontos)`);
+            bonusPoints += 1 * Math.min(2, occurrences);
         }
     });
 
     // 📌 Bonificação por Atributos Relevantes
     rules.relevantAttributes.forEach(attr => {
-        if ($(`[${attr}]`).length > 0) {
-            report.push(`🔹 Atributo relevante encontrado: ${attr} (+1 ponto)`);
-            bonusPoints += 1;
+        let occurrences = $(`[${attr}]`).length;
+        if (occurrences > 0) {
+            report.push(`🔹 Atributo relevante encontrado: ${attr} (+1 ponto | limite 3 pontos)`);
+            bonusPoints += 1 * Math.min(3, occurrences);
         }
     });
 
     // 📌 Penalização por Tags Proibidas
     let penaltyPoints = 0;
     rules.forbiddenTags.forEach(tag => {
-        let count = countOccurrences(tag);
-        if (count > 0) {
-            report.push(`❌ Tag proibida encontrada: <${tag}> (${count} ocorrência(s)) (-2 pontos)`);
-            penaltyPoints -= count * 2;
+        let occurrences = countOccurrences(tag);
+        if (occurrences > 0) {
+            report.push(`❌ Tag proibida encontrada: <${tag}> (${occurrences} ocorrência(s)) (-2 pontos | limite -10 pontos)`);
+            penaltyPoints -= 2 * Math.min(5, occurrences);
         }
     });
 
     // 📌 Penalização por Atributos Proibidos
     rules.forbiddenAttributes.forEach(attr => {
-        let count = $(`[${attr}]`).length;
-        if (count > 0) {
-            report.push(`❌ Atributo proibido encontrado: ${attr} (${count} ocorrência(s)) (-2 pontos)`);
-            penaltyPoints -= count * 2;
+        let occurrences = $(`[${attr}]`).length;
+        if (occurrences > 0) {
+            report.push(`❌ Atributo proibido encontrado: ${attr} (${occurrences} ocorrência(s)) (-2 pontos | limite -10 pontos)`);
+            penaltyPoints -= 2 * Math.min(5, occurrences);
         }
     });
-
-    // Reporta detalhes da pontuação base, bônus e penalidades
-    report.push(`\n📊 Pontuação Final: ${score}`)
-    report.push(`🔺 Bônus: +${bonusPoints}`
-        + (bonusPoints > 0 ? ` (${rules.relevantTags.length} tags, ${rules.relevantAttributes.length} atributos)` : ''));
-    report.push(`🔻 Penalidades: ${penaltyPoints}`
-        + (penaltyPoints < 0 ? ` (${rules.forbiddenTags.length} tags, ${rules.forbiddenAttributes.length} atributos)` : '') 
-        + '\n');
-
-    // Informa detalhes das regras básicas como pontuação de base, mínimos e máximos de bônus e penalidades
-    report.push(`📏 Regras de Pontuação:`)
-    report.push(` Nota base com itens requridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
-    report.push(`🔺 Bônus Máximo: ${maxBonus}`);
-    report.push(`🔻 Penalidade Máxima: ${maxPenalty}`);
-    report.push(`\n📝 Observação: A pontuação final é ajustada para ficar entre ${minScore} e 100 pontos.`);
-
 
     // Aplicação do Bônus e Penalidade dentro dos limites
     bonusPoints = Math.min(bonusPoints, maxBonus);
     penaltyPoints = Math.max(penaltyPoints, maxPenalty);
     score += bonusPoints + penaltyPoints;
+
+    // Reporta detalhes da pontuação base, bônus e penalidades
+    report.push(`-------- 📏 Detalhes de Pontuação --------`)
+    report.push(`📊 Pontuação base: ${score}`)
+    report.push(`🔺 Bonificação: +${bonusPoints} pontos`
+        + (bonusPoints > 0 ? ` (${rules.relevantTags.length} tags, ${rules.relevantAttributes.length} atributos)` : ''));
+    report.push(`🔻 Penalidades: ${penaltyPoints}`
+        + (penaltyPoints < 0 ? ` (${rules.forbiddenTags.length} tags, ${rules.forbiddenAttributes.length} atributos)` : ''));
+
+    // Informa detalhes das regras básicas como pontuação de base, mínimos e máximos de bônus e penalidades
+    report.push(`-------- 📏 Regras de Pontuação --------`)
+    report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
+    report.push(`🔺 Bônus Máximo: ${maxBonus}`);
+    report.push(`🔻 Penalidade Máxima: ${maxPenalty}`);
+    report.push(`📝 Observação: A pontuação final é ajustada para ficar entre ${minScore} e 100 pontos.`);
+
+
 
     // Garante que a nota final fique entre 10 e 100
     score = Math.max(minScore, Math.min(score, 100));
