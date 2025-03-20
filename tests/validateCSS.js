@@ -123,23 +123,25 @@ function validateCSS(css, rules) {
     }
 
     if (rules.bonusChecks.grid) {
-        if (css.match(/display:\s*grid/)) {
+        let gridMatches = css.match(/display:\s*grid/) || [];
+        if (gridMatches.length > 0) {
             report.push("🔹 Uso de grid detectado (+2 pontos por item)");
-            totalBonus += 2;
+            let bonus = 2 * gridMatches.length;
+            totalBonus = Math.min(bonus, maxItemBonus);
         }
     }
 
     if (rules.bonusChecks.animations) {
         let animationMatches = css.match(/animation:\s*[\w-]+\s+\d+s|transition:\s*[\w-]+\s+\d+s/g) || [];
         if (animationMatches.length > 0) {
-            report.push("🔹 Uso de animações CSS detectado (+2 pontos por item)");
+            report.push("🔹 Uso de animações CSS detectado (+2 pontos por item | limite 10 pontos)");
             let bonus = 2 * animationMatches.length;
             totalBonus = Math.min(bonus, maxItemBonus);
         }
     }
 
     if (rules.bonusChecks.mediaQueries) {
-        let mediaQueriesMatches = css.match(/@media\s+\(min-width:\s+\d+px\)/g) || [];
+        let mediaQueriesMatches = css.match(/@media\s*\([^)]*\)/g) || [];
         if (mediaQueriesMatches.length > 0) {
             report.push("🔹 Uso de media queries responsivas detectado (+2 pontos por item)");
             let bonus = 2 * mediaQueriesMatches.length;
@@ -200,7 +202,7 @@ function validateCSS(css, rules) {
     report.push ('.');
     report.push(`-------- 📏 Regras de Pontuação --------`)
     report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
-    report.push(`🔺 Bonificação Máxima: ${maxBonus}`);
+    report.push(`🔺 Bonificação Máxima: ${maxBonus} | Limite de ${maxItemBonus} pontos por item`);
     report.push(`🔹 Possibilidades de bonificação: 
         - Uso de variáveis CSS (+2 pontos por item)
         - Uso de flexbox (+2 pontos por item)
