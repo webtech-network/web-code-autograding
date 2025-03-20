@@ -79,7 +79,7 @@ function validateGit(rules) {
 
     // 📌 6. Verificação do Número de Linhas Modificadas
     if (rules.minLinesChanged) {
-        const linesChanged = parseInt(execSync("git log --stat --pretty=tformat: | awk '{ sum += $1 } END { print sum }'").toString().trim(), 10);
+        const linesChanged = parseInt(execSync("git log --pretty=tformat: --numstat | awk '{ add += $1 } END { print add }'").toString().trim(), 10);
         if (linesChanged < rules.minLinesChanged) {
             report.push(`⚠️ Poucas linhas modificadas (${linesChanged}/${rules.minLinesChanged}) (-10 pontos)`);
             score -= 10;
@@ -113,10 +113,10 @@ function validateGit(rules) {
     if (rules.requiredFiles) {
         rules.requiredFiles.forEach(file => {
             if (!fs.existsSync(file)) {
-                report.push(`⚠️ Arquivo obrigatório ausente: ${file} (-3 pontos)`);
-                score -= 3;
+                report.push(`⚠️ Arquivo obrigatório ausente: ${file} (-5 pontos)`);
+                score -= 5;
             } else {
-                report.push(`✅ Arquivo encontrado: ${file}`);
+                report.push(`✅ Arquivo obrigatório encontrado: ${file}`);
             }
         });
     }
