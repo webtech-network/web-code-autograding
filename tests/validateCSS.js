@@ -192,7 +192,7 @@ function validateCSS(css, rules) {
     // Reporta detalhes da pontuação base, bônus e penalidades
     report.push ('.');
     report.push(`📊 Pontuação base: ${baseScore}`)
-    report.push(`🔺 Bônus: ${totalBonus}`);
+    report.push(`🔺 Bonificação: ${totalBonus}`);
     report.push(`🔻 Penalidades: ${totalPenalty}`)
     report.push(`📈 Nota final: ${score + totalBonus + totalPenalty} em 100`);
 
@@ -200,13 +200,18 @@ function validateCSS(css, rules) {
     report.push ('.');
     report.push(`-------- 📏 Regras de Pontuação --------`)
     report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
-    report.push(`🔺 Bônus Máximo: ${maxBonus}`);
+    report.push(`🔺 Bonificação Máxima: ${maxBonus}`);
     report.push(`🔹 Possibilidades de bonificação: 
         - Uso de variáveis CSS (+2 pontos por item)
         - Uso de flexbox (+2 pontos por item)
         - Uso de grid (+2 pontos por item)
         - Uso de animações CSS (+2 pontos por item)
-        - Uso de media queries responsivas (+2 pontos por item)`);            
+        - Uso de media queries responsivas (+2 pontos por item)`);   
+    report.push(`❌ Possibilidades de penalidades:
+        - Uso excessivo de \`!important\` (-3 pontos)
+        - Uso de seletores ID (-3 pontos por item)
+        - Uso de cores em hexadecimal sem variáveis (-2 pontos)
+        - Aninhamento excessivo (-3 pontos por item)`);          
     report.push(`🔻 Penalidade Máxima: ${maxPenalty}`);
     report.push(`📝 Observação: A pontuação final é ajustada para ficar entre ${minScore} e 100 pontos
         com base nos bônus e penalidades aplicados.`);
