@@ -10,9 +10,21 @@ function loadFile(filePath) {
     return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '';
 }
 
+// Função para carregar o arquivo de configuração
+let descriptor = null;
 function loadDescriptor() {
-    return JSON.parse(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/.github/test-config.json`, 'utf-8'));
-}
+    if (!descriptor) {
+        try {
+            descriptor = JSON.parse(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/.github/test-config.json`, 'utf-8'));
+        }
+        catch (error) {
+            console.error('Erro ao carregar o arquivo de configuração:', error);
+            descriptor = {};
+        }
+    }
+    return descriptor;
+}      
+
 
 function validateHTMLFile() {
     const descriptor = loadDescriptor();

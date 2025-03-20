@@ -9,6 +9,13 @@ function validateGit(rules) {
     let report = [];
     let score = baseScore;
 
+    // 📌 0. Verificação de Configuração
+    if (!rules) {
+        report.push("❌ Arquivo de configuração ausente");
+        score = 0;
+        return { report, score };
+    }
+
     // 📌 1. Verificação das Branches Obrigatórias
     if (rules.requiredBranches) {
         const branches = execSync('git branch -r')

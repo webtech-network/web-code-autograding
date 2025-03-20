@@ -1,7 +1,28 @@
 const cheerio = require('cheerio');
 const validator = require('html-validator');
 
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+  }
+
 function validateHTML(html, rules) {
+    // Verifica se o HTML é válido
+    if (!html) {
+        return {
+            report: ['❌ Nenhum conteúdo HTML encontrado'],
+            score: 0
+        };
+    }
+
+    // Verifica se as regras estão vazias {}
+    if (isEmpty(rules)) {
+        return {
+            report: ['❌ Nenhuma regra de validação fornecida'],
+            score: 0
+        };
+    }
+
+    // carrega o HTML no Cheerio
     const $ = cheerio.load(html);
 
     // --- Contabilização de pontos com HTML ---

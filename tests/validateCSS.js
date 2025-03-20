@@ -1,6 +1,26 @@
 const fs = require('fs');
 
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+  }
+
 function validateCSS(css, rules) {
+    // Verifica se o CSS é válido
+    if (!css) {
+        return {
+            report: ['❌ Nenhum conteúdo CSS encontrado'],
+            score: 0
+        };
+    }
+
+    // Verifica se as regras estão vazias {}
+    if (isEmpty(rules)) {
+        return {
+            report: ['❌ Nenhuma regra de validação fornecida'],
+            score: 0
+        };
+    }
+
     // Normalização do CSS para evitar variações de formatação
     css = css.replace(/\s+/g, ' ').trim().toLowerCase();
 
