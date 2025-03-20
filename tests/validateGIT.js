@@ -127,8 +127,8 @@ function validateGit(rules) {
     // ✅ Commits semânticos
     const semanticCommits = execSync('git log --oneline').toString().split("\n").filter(line => /\b(feat|fix|refactor|docs|test|chore):/.test(line));
     if (semanticCommits.length > 0) {
-        report.push(`🔹 Commits semânticos detectados (+3 pontos | limite 9 pontos)`);
-        totalBonus += 3 * Math.min(3, semanticCommits.length);
+        report.push(`🔹 Commits semânticos detectados (+3 pontos | limite 15 pontos)`);
+        totalBonus += 3 * Math.min(5, semanticCommits.length);
     }
 
     // ✅ Uso de Pull Requests

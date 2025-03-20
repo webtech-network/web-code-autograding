@@ -34,7 +34,7 @@ function validateHTMLFile() {
 
 function validateCSSFile() {
     const descriptor = loadDescriptor();
-    const css = loadFile(`${process.env.GITHUB_WORKSPACE}/public/style.css`);
+    const css = loadFile(`${process.env.GITHUB_WORKSPACE}/public/styles.css`);
     return validateCSS(css, descriptor.css);
 }
 
