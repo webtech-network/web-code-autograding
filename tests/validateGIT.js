@@ -147,23 +147,29 @@ function validateGit(rules) {
         totalBonus += 5;
     }
 
+    // Totaliza a bonificação, limitando ao máximo permitido
     totalBonus = Math.min(totalBonus, maxBonus);
-    score += totalBonus;
-
+    
     // Reporta detalhes da pontuação base, bônus e penalidades
     report.push ('.');
     report.push(`-------- 📏 Detalhes de Pontuação --------`)
     report.push(`📊 Pontuação base: ${score}`)
     report.push(`🔺 Bonificação: ${totalBonus}`);
-
+    
     // Informa detalhes das regras básicas como pontuação de base, mínimos e máximos de bônus e penalidades
     report.push ('.');
     report.push(`-------- 📏 Regras de Pontuação --------`)
     report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
     report.push(`⚠️ Itens requeridos: ${rules.requiredBranches.length} branches, ${rules.minCommits} commits, ${rules.minTags} tags, ${rules.minMerges} merges, ${rules.minLinesChanged} linhas modificadas`);
-    report.push(`🔺 Bonificação Máximo: ${maxBonus}`);
-
+    report.push(`🔹 Possibilidades de bonificação: 
+    - Commits semânticos (palavras-chave: feat | fix | refactor | docs | test | chore) (+3 pontos | limite 9 pontos)
+    - Uso de workflows (+5 pontos)
+    - Arquivo CONTRIBUTING.md (+5 pontos)
+    - Arquivo LICENSE (+5 pontos)`);
+    report.push(`🔺 Bonificação Máxima: ${maxBonus}`);
+    
     // 📌 Garantia de que a nota final fique entre 10 e 100
+    score += totalBonus;
     score = Math.max(minScore, Math.min(score, 100));
 
     return {
