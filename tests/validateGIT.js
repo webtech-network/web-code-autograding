@@ -162,7 +162,7 @@ function validateGit(rules) {
     report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
     report.push(`⚠️ Itens requeridos: ${rules.requiredBranches.length} branches, ${rules.minCommits} commits, ${rules.minTags} tags, ${rules.minMerges} merges, ${rules.minLinesChanged} linhas modificadas`);
     report.push(`🔹 Possibilidades de bonificação: 
-    - Commits semânticos (palavras-chave: feat | fix | refactor | docs | test | chore) (+3 pontos | limite 9 pontos)
+    - Commits semânticos (palavras-chave: feat | fix | refactor | docs | test | chore) (+3 pontos | limite 15 pontos)
     - Uso de workflows (+5 pontos)
     - Arquivo CONTRIBUTING.md (+5 pontos)
     - Arquivo LICENSE (+5 pontos)`);
