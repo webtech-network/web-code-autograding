@@ -2,10 +2,10 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 
 function validateGit(rules) {
-    let baseScore = 60;
+    let baseScore = 70;
     let minScore = 10;
-    let maxBonus = 20;
-    let maxPenalty = -20;
+    let maxBonus = 30;
+    let maxPenalty = -40;
     let report = [];
     let score = baseScore;
 
@@ -37,10 +37,10 @@ function validateGit(rules) {
     if (rules.minCommits) {
         const commitCount = parseInt(execSync('git rev-list --count HEAD').toString().trim(), 10);
         if (commitCount < rules.minCommits) {
-            report.push(`⚠️ Poucos commits no repositório (${commitCount}/${rules.minCommits}) (-10 pontos)`);
+            report.push(`⚠️ Número mínimo de commits não atendido (${commitCount}/${rules.minCommits}) (-10 pontos)`);
             score -= 10;
         } else {
-            report.push(`✅ Commits suficientes (${commitCount})`);
+            report.push(`✅ Número de commits suficientes (${commitCount})`);
         }
     }
 
@@ -48,10 +48,10 @@ function validateGit(rules) {
     if (rules.minTags) {
         const tagCount = parseInt(execSync('git tag | wc -l').toString().trim(), 10);
         if (tagCount < rules.minTags) {
-            report.push(`⚠️ Poucas tags encontradas (${tagCount}/${rules.minTags}) (-10 pontos)`);
+            report.push(`⚠️ Número mínimo de tags não atendido (${tagCount}/${rules.minTags}) (-10 pontos)`);
             score -= 10;
         } else {
-            report.push(`✅ Tags suficientes (${tagCount})`);
+            report.push(`✅ Número de tags suficientes (${tagCount})`);
         }
     }
 
@@ -70,7 +70,7 @@ function validateGit(rules) {
     if (rules.minMerges) {
         const mergeCount = parseInt(execSync('git log --merges --oneline | wc -l').toString().trim(), 10);
         if (mergeCount < rules.minMerges) {
-            report.push(`⚠️ Poucos merges realizados (${mergeCount}/${rules.minMerges}) (-3 pontos)`);
+            report.push(`⚠️ Número mínimo de merges não atendido (${mergeCount}/${rules.minMerges}) (-3 pontos)`);
             score -= 3;
         } else {
             report.push(`✅ Merges suficientes (${mergeCount})`);
@@ -127,28 +127,41 @@ function validateGit(rules) {
     // ✅ Commits semânticos
     const semanticCommits = execSync('git log --oneline').toString().split("\n").filter(line => /\b(feat|fix|refactor|docs|test|chore):/.test(line));
     if (semanticCommits.length > 0) {
-        report.push(`🔹 Commits semânticos detectados (+3 pontos)`);
-        totalBonus += 3;
+        report.push(`🔹 Commits semânticos detectados (+3 pontos | limite 9 pontos)`);
+        totalBonus += 3 * Math.min(3, semanticCommits.length);
     }
 
     // ✅ Uso de Pull Requests
     if (fs.existsSync('.github/workflows') || fs.existsSync('Jenkinsfile')) {
-        report.push(`🔹 Existência de workflows configurados (+3 pontos)`);
-        totalBonus += 3;
+        report.push(`🔹 Existência de workflows configurados (+5 pontos)`);
+        totalBonus += 5;
     }
 
     // ✅ Presença de `CONTRIBUTING.md` e `LICENSE`
     if (fs.existsSync('CONTRIBUTING.md')) {
-        report.push(`🔹 Arquivo CONTRIBUTING.md encontrado (+2 pontos)`);
-        totalBonus += 2;
+        report.push(`🔹 Arquivo CONTRIBUTING.md encontrado (+5 pontos)`);
+        totalBonus += 5;
     }
     if (fs.existsSync('LICENSE')) {
-        report.push(`🔹 Arquivo LICENSE encontrado (+2 pontos)`);
-        totalBonus += 2;
+        report.push(`🔹 Arquivo LICENSE encontrado (+5 pontos)`);
+        totalBonus += 5;
     }
 
     totalBonus = Math.min(totalBonus, maxBonus);
     score += totalBonus;
+
+    // Reporta detalhes da pontuação base, bônus e penalidades
+    report.push ('.');
+    report.push(`-------- 📏 Detalhes de Pontuação --------`)
+    report.push(`📊 Pontuação base: ${score}`)
+    report.push(`🔺 Bonificação: ${totalBonus}`);
+
+    // Informa detalhes das regras básicas como pontuação de base, mínimos e máximos de bônus e penalidades
+    report.push ('.');
+    report.push(`-------- 📏 Regras de Pontuação --------`)
+    report.push(` Nota base com itens requeridos: ${baseScore}, Mínimo: ${minScore}, Máximo: 100`);
+    report.push(`⚠️ Itens requeridos: ${rules.requiredBranches.length} branches, ${rules.minCommits} commits, ${rules.minTags} tags, ${rules.minMerges} merges, ${rules.minLinesChanged} linhas modificadas`);
+    report.push(`🔺 Bonificação Máximo: ${maxBonus}`);
 
     // 📌 Garantia de que a nota final fique entre 10 e 100
     score = Math.max(minScore, Math.min(score, 100));
