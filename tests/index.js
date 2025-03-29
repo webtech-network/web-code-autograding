@@ -1,4 +1,5 @@
 const fs = require('fs');
+const process = require('process');
 const path = require('path');
 
 const validateHTML = require('./validateHTML');
