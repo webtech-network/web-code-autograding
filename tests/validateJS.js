@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { ESLint } = require('eslint');
 const espree = require('espree');
 
@@ -21,13 +20,13 @@ async function ValidateJSFile(code, rules) {
     try {
         ast = espree.parse(code, { ecmaVersion: 2022, sourceType: 'module' });
     } catch (e) {
-        report.push("❌ Erro de sintaxe no código (-5 pontos)");
+        report.push(`❌ Erro de sintaxe no código (-5 pontos) [${e.message}]`);
         baseScore -= 5;
         ast = null;
     }
 
     // 📌 ESLint análise
-    let eslintScoreImpact = 0;
+    // let eslintScoreImpact = 0;
     if (rules.bonusChecks.eslintClean || rules.penaltyChecks.eslintErrors) {
         const eslint = new ESLint();
         const results = await eslint.lintText(code);
@@ -187,8 +186,8 @@ async function ValidateJSFile(code, rules) {
 
     return {
         report,
-        score: finalScore.toFixed(2)
+        score: finalScore
     };
 }
 
-exports = ValidateJSFile;
+module.exports = ValidateJSFile;
