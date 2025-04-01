@@ -1,200 +1,192 @@
-// const fs = require('fs');
-// const { ESLint } = require('eslint');
-// const espree = require('espree');
+const fs = require('fs');
+const { ESLint } = require('eslint');
+const espree = require('espree');
 
-async function validateJS(code, rules) {
-    // const report = [];
-    // let baseScore = 80;
-    // let minScore = 10;
-    // let maxBonus = 20;
-    // let maxPenalty = -30;
-    // const maxItemBonus = 5;
-    // const maxItemPenalty = 5;
+async function ValidateJSFile(code, rules) {
+    const report = [];
+    let baseScore = 80;
+    let minScore = 10;
+    let maxBonus = 20;
+    let maxPenalty = -30;
+    const maxItemBonus = 5;
+    const maxItemPenalty = 5;
 
-    // let bonus = 0;
-    // let penalty = 0;
+    let bonus = 0;
+    let penalty = 0;
 
-    // const lines = code.split('\n').map(l => l.trim());
-    // const lineCount = lines.filter(l => l && !l.startsWith('//')).length;
+    const lines = code.split('\n').map(l => l.trim());
+    const lineCount = lines.filter(l => l && !l.startsWith('//')).length;
 
-    // let ast;
-    // try {
-    //     ast = espree.parse(code, { ecmaVersion: 2022, sourceType: 'module' });
-    // } catch (e) {
-    //     report.push("❌ Erro de sintaxe no código (-5 pontos)");
-    //     baseScore -= 5;
-    //     ast = null;
-    // }
+    let ast;
+    try {
+        ast = espree.parse(code, { ecmaVersion: 2022, sourceType: 'module' });
+    } catch (e) {
+        report.push("❌ Erro de sintaxe no código (-5 pontos)");
+        baseScore -= 5;
+        ast = null;
+    }
 
-    // // 📌 ESLint análise
-    // if (rules.bonusChecks.eslintClean || rules.penaltyChecks.eslintErrors) {
-    //     const eslint = new ESLint({ useEslintrc: false, baseConfig: { extends: 'eslint:recommended' } });
-    //     const results = await eslint.lintText(code);
-    //     const messages = results[0].messages;
-    //     const errors = messages.filter(m => m.severity === 2);
+    // 📌 ESLint análise
+    let eslintScoreImpact = 0;
+    if (rules.bonusChecks.eslintClean || rules.penaltyChecks.eslintErrors) {
+        const eslint = new ESLint({ useEslintrc: false, baseConfig: { extends: 'eslint:recommended' } });
+        const results = await eslint.lintText(code);
+        const messages = results[0].messages;
 
-    //     if (rules.bonusChecks.eslintClean && errors.length === 0) {
-    //         report.push(`🔹 ESLint não encontrou erros (+2 pontos)`);
-    //         bonus += 2;
-    //     }
+        const errors = messages.filter(m => m.severity === 2);
 
-    //     if (rules.penaltyChecks.eslintErrors && errors.length > 0) {
-    //         const errorCount = errors.length;
-    //         const itemPenalty = Math.min(errorCount * 1, maxItemPenalty);
-    //         report.push(`❌ ESLint encontrou ${errorCount} erro(s) (-${itemPenalty} pontos)`);
-    //         penalty -= itemPenalty;
-    //     }
-    // }
+        if (rules.bonusChecks.eslintClean && errors.length === 0) {
+            report.push(`🔹 ESLint não encontrou erros (+2 pontos)`);
+            bonus += Math.min(2, maxItemBonus);
+        }
 
-    // // 📌 AST + Regex Checks
-    // if (rules.requiredChecks.useModernFunctions) {
-    //     const found = (code.match(/fetch|\.map\(|\.filter\(/g) || []).length;
-    //     if (found === 0) {
-    //         report.push("⚠️ Funções modernas não encontradas (-3 pontos)");
-    //         baseScore -= 3;
-    //     } else {
-    //         report.push(`✅ Uso de funções modernas detectado (${found})`);
-    //     }
-    // }
+        if (rules.penaltyChecks.eslintErrors && errors.length > 0) {
+            report.push(`❌ ESLint encontrou ${errors.length} erro(s) (-3 pontos)`);
+            penalty -= Math.min(3, maxItemPenalty);
+        }
+    }
 
-    // if (rules.requiredChecks.noVar) {
-    //     const count = (code.match(/[^a-zA-Z]var\s/g) || []).length;
-    //     if (count > 0) {
-    //         const itemPenalty = Math.min(count * 1, maxItemPenalty);
-    //         report.push(`⚠️ Uso de 'var' detectado (${count} ocorrência(s)) (-${itemPenalty} pontos)`);
-    //         baseScore -= itemPenalty;
-    //     } else {
-    //         report.push("✅ Nenhum uso de 'var'");
-    //     }
-    // }
+    // 📌 AST + Regex Checks
+    if (rules.requiredChecks.useModernFunctions) {
+        const found = /fetch|\.map\(|\.filter\(/.test(code);
+        if (!found) {
+            report.push("⚠️ Funções modernas não encontradas (-3 pontos)");
+            baseScore -= Math.min(3, maxItemPenalty);
+        } else {
+            report.push("✅ Uso de funções modernas detectado");
+        }
+    }
 
-    // if (rules.requiredChecks.modularCode && ast) {
-    //     const funcNodes = ast.body.filter(node => node.type === 'FunctionDeclaration' || (node.type === 'VariableDeclaration' && /ArrowFunction/.test(node?.declarations?.[0]?.init?.type)));
-    //     if (funcNodes.length === 0) {
-    //         report.push("⚠️ Código não modularizado em funções (-4 pontos)");
-    //         baseScore -= 4;
-    //     } else {
-    //         report.push("✅ Código modularizado em funções");
-    //     }
-    // }
+    if (rules.requiredChecks.noVar && /[^a-zA-Z]var\s/.test(code)) {
+        report.push("⚠️ Uso de `var` detectado (-3 pontos)");
+        baseScore -= Math.min(3, maxItemPenalty);
+    }
 
-    // if (rules.requiredChecks.usesControlStructures && ast) {
-    //     const count = ast.body.filter(node => ['IfStatement', 'ForStatement', 'WhileStatement', 'SwitchStatement'].includes(node.type)).length;
-    //     if (count === 0) {
-    //         report.push("⚠️ Nenhuma estrutura de controle detectada (-3 pontos)");
-    //         baseScore -= 3;
-    //     } else {
-    //         report.push(`✅ Estruturas de controle encontradas (${count})`);
-    //     }
-    // }
+    if (rules.requiredChecks.modularCode && ast) {
+        const hasFunctions = ast.body.some(node => node.type === 'FunctionDeclaration' || node.type === 'VariableDeclaration' && /ArrowFunction/.test(node?.declarations?.[0]?.init?.type));
+        if (!hasFunctions) {
+            report.push("⚠️ Código não modularizado em funções (-4 pontos)");
+            baseScore -= Math.min(4, maxItemPenalty);
+        } else {
+            report.push("✅ Código modularizado em funções");
+        }
+    }
 
-    // if (rules.requiredChecks.minLines && lineCount < rules.requiredChecks.minLines) {
-    //     report.push(`⚠️ Código com poucas linhas úteis (${lineCount}) (-3 pontos)`);
-    //     baseScore -= 3;
-    // }
+    if (rules.requiredChecks.usesControlStructures && ast) {
+        const found = ast.body.some(node => ['IfStatement', 'ForStatement', 'WhileStatement', 'SwitchStatement'].includes(node.type));
+        if (!found) {
+            report.push("⚠️ Nenhuma estrutura de controle detectada (-3 pontos)");
+            baseScore -= Math.min(3, maxItemPenalty);
+        } else {
+            report.push("✅ Estruturas de controle encontradas");
+        }
+    }
 
-    // if (rules.requiredChecks.callsUserFunctions && ast) {
-    //     const calls = ast.body.filter(node => node.type === 'ExpressionStatement' && node.expression.type === 'CallExpression');
-    //     if (calls.length < 1) {
-    //         report.push("⚠️ Nenhuma chamada a função do usuário (-3 pontos)");
-    //         baseScore -= 3;
-    //     } else {
-    //         report.push("✅ Funções chamadas corretamente");
-    //     }
-    // }
+    if (rules.requiredChecks.minLines && lineCount < rules.requiredChecks.minLines) {
+        report.push(`⚠️ Código com poucas linhas úteis (${lineCount}) (-3 pontos)`);
+        baseScore -= Math.min(3, maxItemPenalty);
+    }
 
-    // // 📌 Bonificações
-    // const bonusItems = [
-    //     { rule: 'usesAsync', regex: /async\s+function|await\s+/, points: 3 },
-    //     { rule: 'usesArrowFunctions', regex: /=>/, points: 2 },
-    //     { rule: 'usesTemplateLiterals', regex: /`[^`]*\${[^}]+}[^`]*`/, points: 2 },
-    //     { rule: 'usesSpread', regex: /\.\.\.\w+/, points: 2 },
-    //     { rule: 'hasImports', regex: /import\s.+from\s|export\s/, points: 3 },
-    //     { rule: 'hasComments', regex: /\/\/|\/\*/, points: 2 },
-    //     { rule: 'hasErrorHandling', regex: /try\s*{[^}]+}\s*catch/, points: 2 }
-    // ];
+    if (rules.requiredChecks.callsUserFunctions && ast) {
+        const calls = ast.body.filter(node => node.type === 'ExpressionStatement' && node.expression.type === 'CallExpression');
+        if (calls.length < 1) {
+            report.push("⚠️ Nenhuma chamada a função do usuário (-3 pontos)");
+            baseScore -= Math.min(3, maxItemPenalty);
+        } else {
+            report.push("✅ Funções chamadas corretamente");
+        }
+    }
 
-    // bonusItems.forEach(({ rule, regex, points }) => {
-    //     if (rules.bonusChecks[rule]) {
-    //         const matches = code.match(regex) || [];
-    //         const score = Math.min(matches.length * points, maxItemBonus);
-    //         if (score > 0) {
-    //             report.push(`🔹 ${rule} detectado (${matches.length} ocorrência(s)) (+${score} pontos)`);
-    //             bonus += score;
-    //         }
-    //     }
-    // });
+    // 📌 Bonificações
+    if (rules.bonusChecks.usesAsync && /async\s+function|await\s+/.test(code)) {
+        report.push("🔹 Uso de async/await detectado (+3 pontos)");
+        bonus += Math.min(3, maxItemBonus);
+    }
 
-    // // 📌 Penalizações
-    // const penaltyItems = [
-    //     { rule: 'usesEval', regex: /eval\s*\(/, points: 5 },
-    //     { rule: 'globalVariables', regex: /window\.|global\./, points: 3 },
-    //     { rule: 'badNames', regex: /\b(x|data|temp)\b/, points: 2 }
-    // ];
+    if (rules.bonusChecks.usesArrowFunctions && /=>/.test(code)) {
+        report.push("🔹 Uso de arrow functions (+2 pontos)");
+        bonus += Math.min(2, maxItemBonus);
+    }
 
-    // penaltyItems.forEach(({ rule, regex, points }) => {
-    //     if (rules.penaltyChecks[rule]) {
-    //         const matches = code.match(regex) || [];
-    //         const score = Math.min(matches.length * points, maxItemPenalty);
-    //         if (score > 0) {
-    //             report.push(`❌ ${rule} detectado (${matches.length} ocorrência(s)) (-${score} pontos)`);
-    //             penalty -= score;
-    //         }
-    //     }
-    // });
+    if (rules.bonusChecks.usesTemplateLiterals && /`[^`]*\${[^}]+}[^`]*`/.test(code)) {
+        report.push("🔹 Uso de template literals (+2 pontos)");
+        bonus += Math.min(2, maxItemBonus);
+    }
 
-    // // Comentários excessivos
-    // if (rules.penaltyChecks.tooManyComments) {
-    //     const commentLines = lines.filter(l => l.startsWith('//') || l.startsWith('/*')).length;
-    //     if (commentLines / lines.length > 0.2) {
-    //         report.push("⚠️ Comentários excessivos detectados (-2 pontos)");
-    //         penalty -= 2;
-    //     }
-    // }
+    if (rules.bonusChecks.usesSpread && /\.{3}\w+/.test(code)) {
+        report.push("🔹 Uso de spread/rest detectado (+2 pontos)");
+        bonus += Math.min(2, maxItemBonus);
+    }
 
-    // // Funções longas
-    // if (rules.penaltyChecks.longFunctions) {
-    //     const longFuncs = code.match(/function\s+\w+\s*\([^)]*\)\s*{[^}]{300,}}/g) || [];
-    //     const score = Math.min(longFuncs.length * 2, maxItemPenalty);
-    //     if (score > 0) {
-    //         report.push(`⚠️ Funções longas detectadas (${longFuncs.length}) (-${score} pontos)`);
-    //         penalty -= score;
-    //     }
-    // }
+    if (rules.bonusChecks.hasImports && /import\s.+from\s|export\s/.test(code)) {
+        report.push("🔹 Organização modular detectada (+3 pontos)");
+        bonus += Math.min(3, maxItemBonus);
+    }
 
-    // // Código duplicado
-    // if (rules.penaltyChecks.duplicateCode) {
-    //     const counts = {};
-    //     lines.forEach(line => {
-    //         if (line.length > 10) {
-    //             counts[line] = (counts[line] || 0) + 1;
-    //         }
-    //     });
-    //     const dups = Object.values(counts).filter(c => c > 1).length;
-    //     const score = Math.min(dups * 2, maxItemPenalty);
-    //     if (score > 0) {
-    //         report.push(`⚠️ Código duplicado detectado (${dups} duplicações) (-${score} pontos)`);
-    //         penalty -= score;
-    //     }
-    // }
+    if (rules.bonusChecks.hasComments && /\/\/|\/\*/.test(code)) {
+        report.push("🔹 Comentários encontrados (+2 pontos)");
+        bonus += Math.min(2, maxItemBonus);
+    }
 
-    // bonus = Math.min(bonus, maxBonus);
-    // penalty = Math.max(penalty, maxPenalty);
+    if (rules.bonusChecks.hasErrorHandling && /try\s*{[^}]+}\s*catch/.test(code)) {
+        report.push("🔹 Uso de try/catch para tratamento de erros (+2 pontos)");
+        bonus += Math.min(2, maxItemBonus);
+    }
 
-    // let finalScore = baseScore + bonus + penalty;
-    // finalScore = Math.max(minScore, Math.min(finalScore, 100));
+    // 📌 Penalizações
+    if (rules.penaltyChecks.usesEval && /eval\s*\(/.test(code)) {
+        report.push("❌ Uso de `eval()` detectado (-5 pontos)");
+        penalty -= Math.min(5, maxItemPenalty);
+    }
 
-    // Mensagem temporária de alerta sobre elaboração do teste em andamento
-    const report = []
-    const finalScore = 0;
-    report.push("⚠️ Teste de JS em elaboração, pontuação não disponível.");
+    if (rules.penaltyChecks.tooManyComments) {
+        const commentLines = lines.filter(l => l.startsWith('//') || l.startsWith('/*')).length;
+        if (commentLines / lines.length > 0.2) {
+            report.push("⚠️ Comentários excessivos detectados (-2 pontos)");
+            penalty -= Math.min(2, maxItemPenalty);
+        }
+    }
 
-    let score = Math.max(10, Math.min(finalScore, 100));
+    if (rules.penaltyChecks.globalVariables && /window\.|global\./.test(code)) {
+        report.push("❌ Uso de variáveis globais detectado (-3 pontos)");
+        penalty -= Math.min(3, maxItemPenalty);
+    }
+
+    if (rules.penaltyChecks.badNames && /\b(x|data|temp)\b/.test(code)) {
+        report.push("⚠️ Nomes de variáveis genéricos detectados (-2 pontos)");
+        penalty -= Math.min(2, maxItemPenalty);
+    }
+
+    if (rules.penaltyChecks.longFunctions) {
+        const longFuncs = code.match(/function\s+\w+\s*\([^)]*\)\s*{[^}]{300,}}/g) || [];
+        if (longFuncs.length > 0) {
+            report.push("⚠️ Funções longas detectadas (-2 pontos)");
+            penalty -= Math.min(2, maxItemPenalty);
+        }
+    }
+
+    if (rules.penaltyChecks.duplicateCode) {
+        const counts = {};
+        lines.forEach(line => {
+            if (line.length > 10) {
+                counts[line] = (counts[line] || 0) + 1;
+            }
+        });
+        if (Object.values(counts).some(c => c > 2)) {
+            report.push("⚠️ Código duplicado detectado (-3 pontos)");
+            penalty -= Math.min(3, maxItemPenalty);
+        }
+    }
+
+    // 📌 Cálculo final
+    bonus = Math.min(bonus, maxBonus);
+    penalty = Math.max(penalty, maxPenalty);
+
+    let finalScore = baseScore + bonus + penalty;
+    finalScore = Math.max(minScore, Math.min(finalScore, 100));
 
     return {
         report,
-        score
+        score: finalScore.toFixed(2)
     };
 }
-
-module.exports = validateJS;
