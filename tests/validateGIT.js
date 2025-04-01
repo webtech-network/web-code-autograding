@@ -5,7 +5,6 @@ function validateGit(rules) {
     let baseScore = 70;
     let minScore = 10;
     let maxBonus = 30;
-    let maxPenalty = -40;
     let report = [];
     let score = baseScore;
 
@@ -92,7 +91,7 @@ function validateGit(rules) {
     if (rules.checkGitIgnore) {
         if (fs.existsSync('.gitignore')) {
             report.push(`✅ Arquivo .gitignore presente`);
-            if (requiredGitIgnoreEntries) {
+            if (rules.requiredGitIgnoreEntries) {
                 const gitignoreContent = fs.readFileSync('.gitignore', 'utf-8');
                 rules.requiredGitIgnoreEntries.forEach(entry => {
                     if (!gitignoreContent.includes(entry)) {

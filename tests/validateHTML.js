@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const validator = require('html-validator');
+// const validator = require('html-validator');
 
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
