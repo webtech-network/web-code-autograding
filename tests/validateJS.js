@@ -187,7 +187,7 @@ async function validateJS(code, rules) {
     // Mensagem temporária de alerta sobre elaboração do teste em andamento
     const report = []
     const finalScore = 0;
-    report.push("⚠️ Teste de JS em elaboração, pontuação não disponível ainda.");
+    report.push("⚠️ Teste de JS em elaboração, pontuação não disponível.");
 
     return {
         report,
