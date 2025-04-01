@@ -19,6 +19,7 @@
     "@actions/github": "^6.0.0",
     "cheerio": "^1.0.0",
     "cli-table3": "^0.6.5",
+    "esbuild": "^0.25.2",
     "html-validator": "^6.0.1"
   }
 }
