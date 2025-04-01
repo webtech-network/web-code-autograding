@@ -190,3 +190,5 @@ async function ValidateJSFile(code, rules) {
         score: finalScore.toFixed(2)
     };
 }
+
+exports = ValidateJSFile;
