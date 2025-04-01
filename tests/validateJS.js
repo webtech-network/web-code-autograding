@@ -189,9 +189,11 @@ async function validateJS(code, rules) {
     const finalScore = 0;
     report.push("⚠️ Teste de JS em elaboração, pontuação não disponível.");
 
+    let score = Math.max(10, Math.min(finalScore, 100));
+
     return {
         report,
-        score: finalScore.toFixed(2)
+        score
     };
 }
 
