@@ -29,7 +29,7 @@ async function ValidateJSFile(code, rules) {
     // 📌 ESLint análise
     let eslintScoreImpact = 0;
     if (rules.bonusChecks.eslintClean || rules.penaltyChecks.eslintErrors) {
-        const eslint = new ESLint({ useEslintrc: false, baseConfig: { extends: 'eslint:recommended' } });
+        const eslint = new ESLint();
         const results = await eslint.lintText(code);
         const messages = results[0].messages;
 
