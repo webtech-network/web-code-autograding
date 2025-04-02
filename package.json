@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "1.0.1",
+  "version": "2.0.0",
   "name": "example",
   "devDependencies": {
     "jest": "^29.7.0",
