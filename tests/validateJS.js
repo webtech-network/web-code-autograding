@@ -31,7 +31,7 @@ async function validateJS(code, rules) {
 console.log ('Realizando teste: bonusChecks.eslintClean')
         if (rules.bonusChecks.eslintClean || rules.penaltyChecks.eslintErrors) {
             const eslint = new ESLint();
-            const results = await eslint.lintTextS(code);
+            const results = await eslint.lintText(code);
             const messages = results[0].messages;
     
             const errors = messages.filter(m => m.severity === 2);

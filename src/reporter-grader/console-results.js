@@ -17,6 +17,14 @@ exports.ConsoleResults = function ConsoleResults(runnerResults) {
       }
 
       console.log(`🔄 Processing: ${runner}`)
+
+console.log('runner', runner)
+console.log('results', results)
+console.log('index', index) 
+
+      console.log(`Score: ${score.toFixed(2)}/${maxScore}\n`)
+      console.log(`${COLORS.magenta}Resultados dos Testes${COLORS.reset}`)
+    
       let passedTests = 0
       const totalTests = results.tests.length
 
