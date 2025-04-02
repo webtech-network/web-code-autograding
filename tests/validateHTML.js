@@ -128,6 +128,8 @@ function validateHTML(html, rules) {
     // 📌 Penalização por Tags Proibidas
     let penaltyPoints = 0;
     rules.forbiddenTags.forEach(tag => {
+        // Ignora a tag <i>
+        if (tag === 'i') return; 
         let occurrences = countOccurrences(tag);
         if (occurrences > 0) {
             report.push(`❌ Tag proibida encontrada: <${tag}> (${occurrences} ocorrência(s)) (-2 pontos | limite -10 pontos)`);

@@ -90,7 +90,7 @@ function validateCSS(css, rules) {
     if (rules.requiredChecks.checkRequiredProperties) {
         let requiredProperties = rules.requiredChecks.requiredProperties;
         let foundProperties = requiredProperties.filter(prop => new RegExp(`\\b${prop}\\s*:`, "gi").test(css));
-        percentual = foundProperties.length / requiredProperties.length;
+        let percentual = foundProperties.length / requiredProperties.length;
         if (percentual < 0.6) {
             report.push(`❌ Poucas propriedades comuns encontradas - abaixo de 60% (${foundProperties.length}) (-10 pontos)`);
             score -= 10;
