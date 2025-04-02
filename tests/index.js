@@ -1,10 +1,10 @@
 const fs = require('fs');
 const process = require('process');
 
+const validateGit = require('./validateGIT');
 const validateHTML = require('./validateHTML');
 const validateCSS = require('./validateCSS');
 const validateJS = require('./validateJS');
-const validateGit = require('./validateGIT');
 
 function loadFile(filePath) {
     return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '';
