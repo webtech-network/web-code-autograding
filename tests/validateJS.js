@@ -215,7 +215,7 @@ function validateJS(code, rules) {
     const report = [];
     const finalScore = 0;
 
-    report.push('🔄 Validação de código JavaScript em construção...')    ;
+    report.push('✳️ Validação de código JavaScript em construção...')    ;
 
     return {
         report,
