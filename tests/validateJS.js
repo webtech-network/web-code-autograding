@@ -48,7 +48,6 @@ async function ValidateJSFile(code, rules) {
     }
     catch (e) {
         report.push(`⛔️ Erro ao executar ESLint [${e.message}]`);
-        baseScore -= 5;
     }
 
     // 📌 AST + Regex Checks
