@@ -1,7 +1,8 @@
 const { ESLint } = require('eslint');
 const espree = require('espree');
 
-async function validateJS(code, rules) {
+// async function validateJS(code, rules) {
+function validateJS(code, rules) {
     const report = [];
     let baseScore = 80;
     let minScore = 10;
@@ -26,30 +27,30 @@ async function validateJS(code, rules) {
     }
 
     // 📌 ESLint análise
-    try {
-        // let eslintScoreImpact = 0;
-console.log ('Realizando teste: bonusChecks.eslintClean')
-        if (rules.bonusChecks.eslintClean || rules.penaltyChecks.eslintErrors) {
-            const eslint = new ESLint();
-            const results = await eslint.lintText(code);
-            const messages = results[0].messages;
+//     try {
+//         // let eslintScoreImpact = 0;
+// console.log ('Realizando teste: bonusChecks.eslintClean')
+//         if (rules.bonusChecks.eslintClean || rules.penaltyChecks.eslintErrors) {
+//             const eslint = new ESLint();
+//             const results = await eslint.lintText(code);
+//             const messages = results[0].messages;
     
-            const errors = messages.filter(m => m.severity === 2);
+//             const errors = messages.filter(m => m.severity === 2);
     
-            if (rules.bonusChecks.eslintClean && errors.length === 0) {
-                report.push(`🔹 ESLint não encontrou erros (+2 pontos)`);
-                bonus += Math.min(2, maxItemBonus);
-            }
+//             if (rules.bonusChecks.eslintClean && errors.length === 0) {
+//                 report.push(`🔹 ESLint não encontrou erros (+2 pontos)`);
+//                 bonus += Math.min(2, maxItemBonus);
+//             }
     
-            if (rules.penaltyChecks.eslintErrors && errors.length > 0) {
-                report.push(`❌ ESLint encontrou ${errors.length} erro(s) (-3 pontos)`);
-                penalty -= Math.min(3, maxItemPenalty);
-            }
-        }
-    }
-    catch (e) {
-        report.push(`⛔️ Erro ao executar ESLint [${e.message}]`);
-    }
+//             if (rules.penaltyChecks.eslintErrors && errors.length > 0) {
+//                 report.push(`❌ ESLint encontrou ${errors.length} erro(s) (-3 pontos)`);
+//                 penalty -= Math.min(3, maxItemPenalty);
+//             }
+//         }
+//     }
+//     catch (e) {
+//         report.push(`⛔️ Erro ao executar ESLint [${e.message}]`);
+//     }
 
     // 📌 AST + Regex Checks
 console.log ('Realizando teste: requiredChecks.useModernFunctions')
