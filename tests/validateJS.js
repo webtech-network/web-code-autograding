@@ -28,7 +28,7 @@ async function validateJS(code, rules) {
     // 📌 ESLint análise
     try {
         // let eslintScoreImpact = 0;
-console.log ('Realizando te: bonusChecks.eslintClean')
+console.log ('Realizando teste: bonusChecks.eslintClean')
         if (rules.bonusChecks.eslintClean || rules.penaltyChecks.eslintErrors) {
             const eslint = new ESLint();
             const results = await eslint.lintTextS(code);
@@ -109,56 +109,56 @@ console.log ('Realizando teste: requiredChecks.callsUserFunctions')
     }
 
     // 📌 Bonificações
-console.log ('Realizando te: bonusChecks.usesAsync')
+console.log ('Realizando teste: bonusChecks.usesAsync')
     if (rules.bonusChecks.usesAsync && /async\s+function|await\s+/.test(code)) {
         report.push("🔹 Uso de async/await detectado (+3 pontos)");
         bonus += Math.min(3, maxItemBonus);
     }
 
-console.log ('Realizando te: bonusChecks.usesArrowFunctions')
+console.log ('Realizando teste: bonusChecks.usesArrowFunctions')
     if (rules.bonusChecks.usesArrowFunctions && /=>/.test(code)) {
         report.push("🔹 Uso de arrow functions (+2 pontos)");
         bonus += Math.min(2, maxItemBonus);
     }
 
-console.log ('Realizando te: bonusChecks.usesTemplateLiterals')
+console.log ('Realizando teste: bonusChecks.usesTemplateLiterals')
     if (rules.bonusChecks.usesTemplateLiterals && /`[^`]*\${[^}]+}[^`]*`/.test(code)) {
         report.push("🔹 Uso de template literals (+2 pontos)");
         bonus += Math.min(2, maxItemBonus);
     }
 
-console.log ('Realizando te: bonusChecks.usesSpread')
+console.log ('Realizando teste: bonusChecks.usesSpread')
     if (rules.bonusChecks.usesSpread && /\.{3}\w+/.test(code)) {
         report.push("🔹 Uso de spread/rest detectado (+2 pontos)");
         bonus += Math.min(2, maxItemBonus);
     }
 
-console.log ('Realizando te: bonusChecks.hasImports')
+console.log ('Realizando teste: bonusChecks.hasImports')
     if (rules.bonusChecks.hasImports && /import\s.+from\s|export\s/.test(code)) {
         report.push("🔹 Organização modular detectada (+3 pontos)");
         bonus += Math.min(3, maxItemBonus);
     }
 
-console.log ('Realizando te: bonusChecks.hasComments')
+console.log ('Realizando teste: bonusChecks.hasComments')
     if (rules.bonusChecks.hasComments && /\/\/|\/\*/.test(code)) {
         report.push("🔹 Comentários encontrados (+2 pontos)");
         bonus += Math.min(2, maxItemBonus);
     }
 
-console.log ('Realizando te: bonusChecks.hasErrorHandling')
+console.log ('Realizando teste: bonusChecks.hasErrorHandling')
     if (rules.bonusChecks.hasErrorHandling && /try\s*{[^}]+}\s*catch/.test(code)) {
         report.push("🔹 Uso de try/catch para tratamento de erros (+2 pontos)");
         bonus += Math.min(2, maxItemBonus);
     }
 
     // 📌 Penalizações
-console.log ('Realizando test: penaltyChecks.usesEval')
+console.log ('Realizando teste: penaltyChecks.usesEval')
     if (rules.penaltyChecks.usesEval && /eval\s*\(/.test(code)) {
         report.push("❌ Uso de `eval()` detectado (-5 pontos)");
         penalty -= Math.min(5, maxItemPenalty);
     }
 
-console.log ('Realizando test: penaltyChecks.tooManyComments')
+console.log ('Realizando teste: penaltyChecks.tooManyComments')
     if (rules.penaltyChecks.tooManyComments) {
         const commentLines = lines.filter(l => l.startsWith('//') || l.startsWith('/*')).length;
         if (commentLines / lines.length > 0.2) {
@@ -167,19 +167,19 @@ console.log ('Realizando test: penaltyChecks.tooManyComments')
         }
     }
 
-console.log ('Realizando test: penaltyChecks.globalVariables')
+console.log ('Realizando teste: penaltyChecks.globalVariables')
     if (rules.penaltyChecks.globalVariables && /window\.|global\./.test(code)) {
         report.push("❌ Uso de variáveis globais detectado (-3 pontos)");
         penalty -= Math.min(3, maxItemPenalty);
     }
 
-console.log ('Realizando test: penaltyChecks.badNames')
+console.log ('Realizando teste: penaltyChecks.badNames')
     if (rules.penaltyChecks.badNames && /\b(x|data|temp)\b/.test(code)) {
         report.push("⚠️ Nomes de variáveis genéricos detectados (-2 pontos)");
         penalty -= Math.min(2, maxItemPenalty);
     }
 
-console.log ('Realizando test: penaltyChecks.longFunctions')
+console.log ('Realizando teste: penaltyChecks.longFunctions')
     if (rules.penaltyChecks.longFunctions) {
         const longFuncs = code.match(/function\s+\w+\s*\([^)]*\)\s*{[^}]{300,}}/g) || [];
         if (longFuncs.length > 0) {
@@ -188,7 +188,7 @@ console.log ('Realizando test: penaltyChecks.longFunctions')
         }
     }
 
-console.log ('Realizando test: penaltyChecks.duplicateCode')
+console.log ('Realizando teste: penaltyChecks.duplicateCode')
     if (rules.penaltyChecks.duplicateCode) {
         const counts = {};
         lines.forEach(line => {
@@ -208,6 +208,8 @@ console.log ('Realizando test: penaltyChecks.duplicateCode')
 
     let finalScore = baseScore + bonus + penalty;
     finalScore = Math.max(minScore, Math.min(finalScore, 100));
+
+console.log (report.join('\n'), '\n\n', finalScore)
 
     return {
         report,
