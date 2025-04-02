@@ -1,7 +1,7 @@
 const { ESLint } = require('eslint');
 const espree = require('espree');
 
-async function ValidateJSFile(code, rules) {
+async function validateJSFile(code, rules) {
     const report = [];
     let baseScore = 80;
     let minScore = 10;
@@ -195,4 +195,4 @@ async function ValidateJSFile(code, rules) {
     };
 }
 
-module.exports = ValidateJSFile;
+module.exports = validateJSFile;
